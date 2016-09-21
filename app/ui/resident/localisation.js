@@ -272,6 +272,12 @@ button_save = $("#" + sectionId + " .button-save").dxButton({
         if(lastReservationOfResident == null){
             //alert('Store_Reservation.insert(formData);');
             Store_Reservation.insert(formData);
+            // insert details reservation
+            alert('inserr les details');
+            for(var i = 0; i < formData.list_frais.length; i++){
+                var frais = formData.list_frais[i];
+                alert(frais.type_frais);
+            }
         }else{
             Store_Reservation.update(lastReservationOfResident.id, formData);
             //alert('Store_Reservation.update(lastReservationOfResident.id, formData);');
@@ -286,7 +292,8 @@ button_remove = $("#" + sectionId + " .button-remove").dxButton({
         var formData = form.option('formData');
         //console.log(formData.toString());
         //return $.post(apiBaseURL, formData);
-        Store_Reservation.insert(formData);
+        Store_Reservation.remove(lastReservationOfResident.id);
+        resetForm();
     }
 }).dxButton('instance');
 
@@ -297,7 +304,8 @@ button_sortie = $("#" + sectionId + " .button-sortie").dxButton({
         var formData = form.option('formData');
         //console.log(formData.toString());
         //return $.post(apiBaseURL, formData);
-        Store_Reservation.insert(formData);
+        formData.sortie = true;
+        Store_Reservation.update(lastReservationOfResident.id, formData);
     }
 }).dxButton('instance');
 

@@ -33,13 +33,13 @@ var Store = new DevExpress.data.CustomStore({
             take: take
         }*/).done(function (result) {
             var rowsCount = 0;
-            if(result.resident) {
-                rowsCount = result.resident.length;
+            if(result[entityName]) {
+                rowsCount = result[entityName].length;
             }
             if (loadOptions.requireTotalCount === true)
-                deferred.resolve(result.resident, { totalCount: rowsCount });
+                deferred.resolve(result[entityName], { totalCount: rowsCount });
             else
-                deferred.resolve(result.resident)
+                deferred.resolve(result[entityName])
         });
         return deferred.promise();        
     },

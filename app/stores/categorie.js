@@ -2,7 +2,7 @@ var entityName = 'categorie';
 var apiBaseURL = 'http://localhost/_RestAPIs/ResidenceUniversitaire/api.php/' + entityName;
 
 var Store = new DevExpress.data.CustomStore({
-    key: "id", //["categorie_id", "reglement_id"],
+    key: "id", //["resident_id", "reglement_id"],
     load: function (loadOptions) {
         var filterOptions = loadOptions.filter ? JSON.stringify(loadOptions.filter) : "";   // Getting filter settings
         var sortOptions = loadOptions.sort ? JSON.stringify(loadOptions.sort) : "";  // Getting sort settings
@@ -33,13 +33,13 @@ var Store = new DevExpress.data.CustomStore({
             take: take
         }*/).done(function (result) {
             var rowsCount = 0;
-            if(result.categorie) {
-                rowsCount = result.categorie.length;
+            if(result[entityName]) {
+                rowsCount = result[entityName].length;
             }
             if (loadOptions.requireTotalCount === true)
-                deferred.resolve(result.categorie, { totalCount: rowsCount });
+                deferred.resolve(result[entityName], { totalCount: rowsCount });
             else
-                deferred.resolve(result.categorie)
+                deferred.resolve(result[entityName])
         });
         return deferred.promise();        
     },

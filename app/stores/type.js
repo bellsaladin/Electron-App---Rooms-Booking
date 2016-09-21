@@ -1,7 +1,8 @@
 var entityName = 'type';
 var apiBaseURL = 'http://localhost/_RestAPIs/ResidenceUniversitaire/api.php/' + entityName;
+
 var Store = new DevExpress.data.CustomStore({
-    key: "id", //[.type_id", "resident_id"],
+    key: "id", //["resident_id", "reglement_id"],
     load: function (loadOptions) {
         var filterOptions = loadOptions.filter ? JSON.stringify(loadOptions.filter) : "";   // Getting filter settings
         var sortOptions = loadOptions.sort ? JSON.stringify(loadOptions.sort) : "";  // Getting sort settings
@@ -9,6 +10,7 @@ var Store = new DevExpress.data.CustomStore({
                                                                // to ensure that a number of records (totalCount) is required
         var skip = loadOptions.skip; // A number of records that should be skipped 
         var take = loadOptions.take; // A number of records that should be taken
+
         /*var d = $.Deferred();
         $.getJSON('http://mydomain.com/MyDataService', {  
             filter: filterOptions,
@@ -20,6 +22,7 @@ var Store = new DevExpress.data.CustomStore({
             // Data processing here
             d.resolve(result.data, { totalCount: result.totalCount }); 
         });*/
+
         console.log('Store_' + entityName +' : load()');
         var deferred = $.Deferred();
         $.get(apiBaseURL + '?transform=1'/*, {  
@@ -30,13 +33,13 @@ var Store = new DevExpress.data.CustomStore({
             take: take
         }*/).done(function (result) {
             var rowsCount = 0;
-            if(result.type) {
-                rowsCount = result.type.length;
+            if(result[entityName]) {
+                rowsCount = result[entityName].length;
             }
             if (loadOptions.requireTotalCount === true)
-                deferred.resolve(result.type, { totalCount: rowsCount });
+                deferred.resolve(result[entityName], { totalCount: rowsCount });
             else
-                deferred.resolve(result.type)
+                deferred.resolve(result[entityName])
         });
         return deferred.promise();        
     },

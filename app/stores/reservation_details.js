@@ -1,8 +1,9 @@
-var entityName = 'pavillon';
+var entityName = 'reservation_details';
 var apiBaseURL = 'http://localhost/_RestAPIs/ResidenceUniversitaire/api.php/' + entityName;
 
 var Store = new DevExpress.data.CustomStore({
-    key: "id", //["resident_id", "reglement_id"],
+    //key: "id",
+    key :  ["reservation_id", "type_frais"],
     load: function (loadOptions) {
         var filterOptions = loadOptions.filter ? JSON.stringify(loadOptions.filter) : "";   // Getting filter settings
         var sortOptions = loadOptions.sort ? JSON.stringify(loadOptions.sort) : "";  // Getting sort settings
