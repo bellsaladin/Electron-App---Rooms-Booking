@@ -1,0 +1,41 @@
+<template class="task-template">
+  <section id="ui-resident-list-section" class="section js-section u-category-system">
+    <header class="communication" style="margin:0; padding:0">
+      <div class="section-wrapper" style="margin:0; padding:10px 20px 0 20px; max-width:auto;">
+        <h3>
+          <svg class="section-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
+          Residents / Liste
+        </h3>
+      </div>
+    </header>
+    <div class="demo" style="margin:0px;">
+            <div class="pane dx-theme-desktop">
+                <div>
+                    <div class="long-title"><h3></h3></div>
+                    <style>
+                          .options{margin:10px}
+                          .options > div {
+                            width: 24%;
+                            display: inline-block;
+                            margin-top: 30px;
+                          }
+                      </style>
+                    </div>
+                    <div id="full">
+                      <!--<div class="apply-filter-option" style="margin:10px">
+                          <span>Apply Filter</span>
+                          <div id="useFilterApplyButton"></div>
+                      </div>
+                      <div id="gridDeleteSelected"></div>-->
+                      <div class="gridContainer"></div>
+                    </div>
+            </div>
+    </div>
+    <script type="text/javascript">
+      //require('./renderer-process/communication/sync-msg')
+      //require('./renderer-process/communication/async-msg')
+      //require('./renderer-process/communication/invisible-msg')
+    </script>
+
+  </section>
+</template>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Theme -->
+  <link href="assets/devXtreme/css/dx.common.css" rel="stylesheet" />
+  <link rel="dx-theme" data-theme="generic.dark" href="assets/devXtreme/css/dx.dark.css" data-active="false" />
+  <link rel="dx-theme" data-theme="generic.light" href="assets/devXtreme/css/dx.light-compact.css" data-active="false" />
+  <link rel="dx-theme" data-theme="generic.light.compact" href="assets/devXtreme/css/dx.light-compact.css" data-active="true" />
+
+  <!--[if lt IE 9]>
+  <script type="text/javascript" src="assets/devXtreme/js/jquery-1.12.3.min.js"></script>
+  <![endif]-->
+  <!--[if gte IE 9]><!-->
+  <script type="text/javascript" src="assets/devXtreme/js/jquery-2.2.3.min.js"></script>
+  <!--<![endif]-->
+  <script>
+    try {
+        $ = jQuery = module.exports;
+        // If you want module.exports to be empty, uncomment:
+        // module.exports = {};
+    } catch(e) {}
+  </script>
+
+  <script type="text/javascript" src="assets/devXtreme/js/knockout-3.4.0.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr/event.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr/supplemental.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr/unresolved.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/message.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/number.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/date.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/currency.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/jszip.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/dx.viz-web.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/underscore-1.5.1.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/localization/dx.web.en.js"></script>
+  <!--<script type="text/javascript" src="assets/devXtreme/js.js"></script>-->
+
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/nativize.css">
+  <link rel="stylesheet" href="assets/css/global.css">
+  <link rel="stylesheet" href="assets/css/about.css">
+  <link rel="stylesheet" href="assets/css/nav.css">
+  <link rel="stylesheet" href="assets/css/section.css">
+  <link rel="stylesheet" href="assets/css/demo.css">
+  <link rel="stylesheet" href="assets/css/github.css">
+
+  <script type="text/javascript" src="assets/orb.js/react_0.12.2.min.js"></script>
+  <link rel="stylesheet" href="assets/orb.js/orb.min.css">
+  <script type="text/javascript" src="assets/orb.js/orb.min.js"></script>
+
+  <link rel="import" href="sections/about.html">
+  <link rel="import" href="sections/windows/windows.html">
+  <link rel="import" href="sections/windows/crash-hang.html">
+  <link rel="import" href="sections/menus/menus.html">
+  <link rel="import" href="sections/menus/shortcuts.html">
+  <link rel="import" href="sections/native-ui/ex-links-file-manager.html">
+  <link rel="import" href="sections/native-ui/dialogs.html">
+  <link rel="import" href="sections/native-ui/tray.html">
+  <link rel="import" href="sections/communication/ipc.html">
+  <link rel="import" href="sections/system/app-sys-information.html">
+  <link rel="import" href="sections/system/clipboard.html">
+  <link rel="import" href="sections/system/protocol-handler.html">
+  <link rel="import" href="sections/media/pdf.html">
+  <link rel="import" href="sections/media/desktop-capturer.html">
+  
+  <link rel="import" href="sections/ui/resident/list.html">
+  <link rel="import" href="sections/ui/resident/list-oDataStore.html">
+  <link rel="import" href="sections/ui/resident/new.html">
+  
+  <link rel="import" href="sections/ui/chambre/new.html">
+  <link rel="import" href="sections/ui/chambre/list.html">
+
+  <link rel="import" href="sections/ui/pavillon/list.html">
+  <link rel="import" href="sections/ui/etage/list.html">
+  <link rel="import" href="sections/ui/categorie/list.html">
+  <link rel="import" href="sections/ui/type/list.html">
+  <link rel="import" href="sections/ui/parametres.html">
+
+  <link rel="import" href="sections/ui/resident/localisation.html">
+</head>
+<body>
+
+  <nav id="leftNavbar" class="nav js-nav">
+    <header class="nav-header">
+      <h1 class="nav-title">Résidence <strong>Univ.</strong></h1>
+      <!--<svg class="nav-header-icon"><use xlink:href="assets/img/icons.svg#icon-electron"></use></svg>-->
+    </header>
+
+   <!-- <div class="nav-item u-category-windows">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-windows"></use></svg>
+        Windows
+      </h5>
+      <button type="button" id="button-windows" data-section="windows" class="nav-button">Create and manage <em>windows</em></button>
+      <button type="button" id="button-crash-hang" data-section="crash-hang" class="nav-button">Handling window <em>crashes and hangs</em></button>
+    </div>
+
+    <div class="nav-item u-category-menu">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
+        Menus
+      </h5>
+      <button type="button" id="button-menus" data-section="menus" class="nav-button">Customize <em>menus</em> </button>
+      <button type="button" id="button-shortcuts" data-section="shortcuts" class="nav-button">Register keyboard <em>shortcuts</em></button>
+    </div>
+
+    <div class="nav-item u-category-native-ui">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-native-ui"></use></svg>
+        Native User Interface</h5>
+      <button type="button" id="button-ex-links-file-manager" data-section="ex-links-file-manager" class="nav-button">Open <em>external links</em> or system <em>file manager</em></button>
+      <button type="button" id="button-dialogs" data-section="dialogs" class="nav-button">Use system <em>dialogs</em></button>
+      <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>
+    </div> -->
+
+    <!--<div class="nav-item u-category-communication">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-communication"></use></svg>
+        Communication
+      </h5>
+      <button type="button" id="button-ipc" data-section="ipc" class="nav-button">Communicate between the <em>two processes</em></button>
+    </div>
+
+    <div class="nav-item u-category-system">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-system"></use></svg>
+        System
+      </h5>
+      <button type="button" id="button-app-sys-information" data-section="app-sys-information" class="nav-button" >Get app or user <em>system information</em></button>
+      <button type="button" id="button-clipboard" data-section="clipboard" class="nav-button">Copy and paste from the <em>clipboard</em></button>
+      <button type="button" id="button-protocol" data-section="protocol" class="nav-button">Launch app from <em>protocol handler</em></button>
+    </div>
+
+    <div class="nav-item u-category-media">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-media"></use></svg>
+        Media
+      </h5>
+      <button type="button" id="button-pdf" data-section="pdf" class="nav-button"><em>Print</em> to PDF</button>
+      <button type="button" id="button-desktop-capturer" data-section="desktop-capturer" class="nav-button">Take a <em>screenshot</em></button>
+    </div>-->
+    <div class="nav-item u-category-native-ui">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
+        Gestion des residents
+      </h5>
+      <button type="button" id="button-resident-new" data-section="ui-resident-new" class="nav-button"><em>Nouveau </em> resident</button>
+      <button type="button" id="button-resident-list" data-section="ui-resident-list" class="nav-button"><em>Liste </em> des residents</button>
+      <!--<button type="button" id="button-resident-list-oDataStore" data-section="ui-resident-list-oDataStore" class="nav-button"><em>Liste (oDataStore)</em> des residents</button>-->
+      <button type="button" id="button-resident-ficheSuivi" data-section="ui-resident-ficheSuivi" class="nav-button">Fiche de suivi</button>
+      <button type="button" id="button-resident-localisation" data-section="ui-resident-localisation" class="nav-button">Localisation</button>
+    </div>
+    <div class="nav-item u-category-native-ui">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
+        Gestion des chambres
+      </h5>
+      <button type="button" id="button-chambre-new" data-section="ui-chambre-new" class="nav-button"><em>Nouvelle </em> chambre</button>
+      <button type="button" id="button-chambre-list" data-section="ui-chambre-list" class="nav-button"><em>Liste </em> des chambres</button>
+      <!--<button type="button" id="button-crash-hang" data-section="crash-hang" class="nav-button">Handling window <em>crashes and hangs</em></button>
+      <button type="button" id="button-ex-links-file-manager" data-section="ex-links-file-manager" class="nav-button">Open <em>external links</em> or system <em>file manager</em></button>
+      <button type="button" id="button-dialogs" data-section="dialogs" class="nav-button">Use system <em>dialogs</em></button>
+      <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>-->
+      <!--<button type="button" id="button-pagination" data-section="ui-pagination" class="nav-button">Pagination</button>-->
+    </div>
+    <div class="nav-item u-category-native-ui">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
+        Paramétrage
+      </h5>
+      <button type="button" id="button-pavillon-list" data-section="ui-pavillon-list" class="nav-button">Pavillons</button>
+      <button type="button" id="button-etage-list" data-section="ui-etage-list" class="nav-button">Etages</button>
+      <button type="button" id="button-categorie-list" data-section="ui-categorie-list" class="nav-button">Categories</button>
+      <button type="button" id="button-type-list" data-section="ui-type-list" class="nav-button">Types de chambres</button>
+      <button type="button" id="button-parametres" data-section="ui-parametres" class="nav-button">Paramètres</button>
+      <!--<button type="button" id="button-crash-hang" data-section="crash-hang" class="nav-button">Handling window <em>crashes and hangs</em></button>
+      <button type="button" id="button-ex-links-file-manager" data-section="ex-links-file-manager" class="nav-button">Open <em>external links</em> or system <em>file manager</em></button>
+      <button type="button" id="button-dialogs" data-section="dialogs" class="nav-button">Use system <em>dialogs</em></button>
+      <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>-->
+      <!--<button type="button" id="button-pagination" data-section="ui-pagination" class="nav-button">Pagination</button>-->
+    </div>
+
+    <!--<div class="nav-item u-category-native-ui">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
+        Localisation
+      </h5>
+      
+      <button type="button" id="button-ex-links-file-manager" data-section="ex-links-file-manager" class="nav-button">Open <em>external links</em> or system <em>file manager</em></button>
+      <button type="button" id="button-dialogs" data-section="dialogs" class="nav-button">Use system <em>dialogs</em></button>
+      <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>
+    </div>-->
+
+    <footer class="nav-footer">
+      <button type="button" id="button-about" data-modal="about" class="nav-footer-button">About</button>
+      <a class="nav-footer-logo" href="https://github.com" aria-label="Homepage">
+        <!--<svg class="nav-footer-icon"><use xlink:href="assets/img/icons.svg#icon-love"></use></svg>-->
+        <small>by Dirigex</small>
+      </a>
+    </footer>
+  </nav>
+
+  <main class="content js-content"></main>
+
+  <script type="text/javascript">
+    //Globalize.locale('de');
+    setTimeout(function(){ document.querySelector('#leftNavbar').classList.add('slide-left'); }, 60000);
+    setTimeout(function(){ document.querySelector('#leftNavbar').classList.add('slide-right'); }, 61000);
+  </script>
+  <script>    
+    require('./assets/imports')
+    require('./assets/ex-links')
+    require('./assets/nav')
+    require('./assets/demo-btns')
+    require('./assets/code-blocks')
+    require('./assets/normalize-shortcuts')
+    
+    require('./app/ui/resident/list')
+    require('./app/ui/resident/list-oDataStore')
+    require('./app/ui/resident/new')
+    require('./app/ui/resident/localisation')
+
+    require('./app/ui/chambre/list')
+    require('./app/ui/chambre/new')
+
+    require('./app/ui/pavillon/list')
+    require('./app/ui/etage/list')
+    require('./app/ui/type/list')
+    require('./app/ui/categorie/list')
+
+    require('./app/ui/parametres')
+
+    
+  </script>
+</body>
+</html>
