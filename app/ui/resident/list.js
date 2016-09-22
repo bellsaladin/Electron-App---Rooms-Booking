@@ -39,8 +39,9 @@ var dataGrid = $("#ui-resident-list-section .gridContainer").dxDataGrid({
     showRowLines : true,
     showColumnLines : false,
     selection: {
-        mode: "multiple"
+        mode: "single"
     },
+    hoverStateEnabled: true,
     remoteOperations : {
         filtering : false,
         grouping : false,
@@ -57,9 +58,9 @@ var dataGrid = $("#ui-resident-list-section .gridContainer").dxDataGrid({
         text : 'Chargement ...'
     },
     editing: {
-        allowAdding : true,
+        allowAdding : false,
         allowDeleting : true,
-        allowUpdating : true,
+        allowUpdating : false,
         mode : 'row',
     },
     onSelectionChanged: function(data) {
@@ -78,13 +79,16 @@ var dataGrid = $("#ui-resident-list-section .gridContainer").dxDataGrid({
         visible: true
     },
     columns: [{
+        dataField: "code",
+        caption: "Code",
+    },{
         dataField: "nom",
         caption: "Nom",
     }, {
         dataField: "prenom",
         caption: "Prenom",
     },
-     {
+    {
         dataField: "date_naissance",
         alignment: "right",
         dataType: "date",
@@ -93,69 +97,34 @@ var dataGrid = $("#ui-resident-list-section .gridContainer").dxDataGrid({
         dataField: "appartenance_politique",
         alignment: "right",
     }],
-    
-    /*columns: [{
-        dataField: "OrderNumber",
-        width: 130,
-        caption: "Invoice Number",
-        headerFilter: {
-            groupInterval: 10000
+    onSelectionChanged: function (selectedItems) {
+        var data = selectedItems.selectedRowsData[0];
+        if(data) {
+            $(".residentInfos").css('display', 'block');
+            $(".residentInfos .photo").attr('src', data.photo);
+            $(".residentInfos .nom").html(data.prenom + ' '  + data.nom);
+            $(".residentInfos .num_cin").html( data.num_cin);
+            $(".residentInfos .sexe").html( data.sexe);
+            $(".residentInfos .date_naissance").html( data.date_naissance);
+            $(".residentInfos .lieu_naissance").html( data.lieu_naissance);
+            $(".residentInfos .tel_resident").html( data.tel_resident);
+            $(".residentInfos .tel_tuteur").html( data.tel_tuteur);
+            $(".residentInfos .nationalite").html( data.nationalite);
+            $(".residentInfos .ville").html( data.ville);
+            $(".residentInfos .appartenance_politique").html( data.appartenance_politique);
+            $(".residentInfos .recommandation").html( data.recommandation);
+
         }
-    }, {
-        dataField: "OrderDate",
-        alignment: "right",
-        dataType: "date",
-        headerFilter: {
-            dataSource: function(data) {
-                data.dataSource.postProcess = function(results) {
-                    results.push({
-                        text: "Weekends",
-                        value: [[getOrderDay, "=", 0],
-                          "or",
-                        [getOrderDay, "=", 6]]
-                    });
-                    
-                    return results;
-                };
-            }
-        }
-    }, {
-        dataField: "SaleAmount",
-        alignment: "right",
-        format: "currency",
-        headerFilter: {
-            dataSource: [ {
-                text: "Less than $3000",
-                value: ["SaleAmount", "<", 3000]
-            }, {
-                
-                text: "$3000 - $5000",
-                value: [["SaleAmount", ">=", 3000], ["SaleAmount", "<", 5000]]
-            }, {
-                
-                text: "$5000 - $10000",
-                value: [["SaleAmount", ">=", 5000], ["SaleAmount", "<", 10000]]
-            }, {
-                
-                text: "$10000 - $20000",
-                value: [["SaleAmount", ">=", 10000], ["SaleAmount", "<", 20000]]
-            }, {
-                
-                text: "Greater than $20000",
-                value: ["SaleAmount", ">=", 20000]
-            }]
-        }
-    }, "Employee", {
-        caption: "City",
-        dataField: "CustomerStoreCity"
-    }, {
-        caption: "State",
-        dataField: "CustomerStoreState"
-    }]*/
+    }
 }).dxDataGrid('instance');
 
-/*dataGrid2.option("masterDetail", {
+dataGrid.option("masterDetail", {
         enabled: false,
-        template: function (container, info) {
+        template: function (container, options) {
+            var currentResident =  options.data;
+            //$("<div>").text(currentEmployeeData.FirstName + " " + currentEmployeeData.LastName + " Tasks:").appendTo(container);
+            //alert(currentResident.photo);
+            var img = $('<img>').attr('src', currentResident.photo).attr('height', '180px').attr('width', '160px');
+            img.appendTo(container);           
         }
-});*/
+});

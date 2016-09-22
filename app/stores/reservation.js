@@ -50,18 +50,30 @@ var Store = new DevExpress.data.CustomStore({
     update: function (key, values) {
         ////Updating data
         //alert(' encodeURIComponent(key)'  +  encodeURIComponent(key));
-        console.log(key);
-        console.log(values);
+        // console.log(key);
+        // console.log(values);
         return $.ajax({
             url: apiBaseURL + "/" + encodeURIComponent(key),
             method: "PUT",
             data: values
         });
     },
-    insert: function (values) {
+    insert: function (values, doneCallback) {
         //Inserting data
-        console.log(values.toString());
-        return $.post(apiBaseURL, values);
+        // console.log(values.toString());
+        //alert(doneCallback);
+        //console.log('doneCallback');
+        //console.log(doneCallback);
+        return $.post(apiBaseURL, values).done(doneCallback);
+        /*if (typeof doneCallback === "function") {
+            alert('with callback');
+            return $.post(apiBaseURL, values).done(doneCallback);   
+        }
+        else{
+            alert('no callback');
+            return $.post(apiBaseURL, values);
+        }*/
+
         /*return $.ajax({
             url: apiBaseURL + "/" + encodeURIComponent(key),
             method: "POST",

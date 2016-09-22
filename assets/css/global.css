@@ -167,3 +167,8 @@ kbd {
 
 
 .spaced{ margin:10px;}
+
+.table-no-border { border-collapse:collapse; font-size:11px }
+.table-no-border tr {height: 40px;}
+.table-no-border td {border:none; text-align: left;}
+

@@ -8,6 +8,7 @@ function fixDate (date) {
 }
 
 function toMysqlDateFormat(date) {
+     if(date instanceof Date){
         var year, month, day;
         year = String(date.getFullYear());
         month = String(date.getMonth() + 1);
@@ -20,6 +21,36 @@ function toMysqlDateFormat(date) {
         }
         return year + "-" + month + "-" + day;
     }
+    return date;
+}
+
+function preprocessData(dataArray, options) {
+    if(options.operation == 'convert'){
+        if(options.direction == 'receiving'){
+            dataArray = convertTinyIntToBoolean(dataArray, options.colIndex);
+        }else if(options.direction == 'sending'){
+            dataArray = convertBooleanToTinyInt(dataArray, options.colIndex);
+        }
+        
+    }
+    return dataArray; 
+}
+
+function convertTinyIntToBoolean(dataArray, colIndex) {
+    for(var i=0; i < dataArray.length; i++){
+        dataArray[i][colIndex] = (dataArray[i][colIndex] == 1)?true : false;
+    }
+    return dataArray;
+}
+
+
+function convertBooleanToTinyInt(dataArray, colIndex) {
+    for(var i=0; i < dataArray.length; i++){
+        dataArray[i][colIndex] = (dataArray[i][colIndex] == true)? 1 : 0;
+    }
+    return dataArray;
+}
+
 
 //module.export {pad}
 
@@ -27,4 +58,5 @@ module.exports = {
     pad: pad,
     fixDate : fixDate,
     toMysqlDateFormat: toMysqlDateFormat,
+    preprocessData : preprocessData
 };

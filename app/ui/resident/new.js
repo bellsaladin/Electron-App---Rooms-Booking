@@ -17,9 +17,9 @@ var formData = {
     sexe : 'M',
     nationalite : '',
     ville : '',
-    appartenance_politique : '',
-    recommandation : '',
-    photo : 'assets/img/resident-homme-placeholder.png'
+    appartenance_politique : 'Non',
+    recommandation : 'Non',
+    photo : null,
 }
 
 var form = $("#" + sectionId + " .form").dxForm({
@@ -27,72 +27,71 @@ var form = $("#" + sectionId + " .form").dxForm({
     enctype : 'multipart/form-data',
     items: [//{dataField: 'id'},
             {dataField: 'code', editorOptions : { disabled : true} },
-            {dataField: 'num_cin'},
-            {dataField: 'nom'},
-            {dataField: 'prenom'},
-            {
-                editorType: 'dxDateBox',
-                dataField: 'date_naissance',
-                label: {
-                    showColon: true,
-                    text: 'Date de naissance'
-                }
+            {},
+            {itemType: "group",
+             caption: "Informations personnelles",
+             items: 
+                [
+                {
+                    editorType: 'dxSelectBox',
+                    dataField: 'sexe',
+                    editorOptions : {
+                        dataSource : [{val : 'M', txt : 'Masculin'}, {val : 'F', txt : 'Feminin'}],
+                        valueExpr: 'val',
+                        displayExpr: 'txt',
+                        onValueChanged: function (e) {
+                            //alert('Pavillon selectionné : ' + e.value);
+                            setCodeResident(e.value);
+                            return;
+                        } 
+                    }
+                },
+                {dataField: 'num_cin'},
+                {dataField: 'nom'},
+                {dataField: 'prenom'},
+                {
+                    editorType: 'dxDateBox',
+                    dataField: 'date_naissance',
+                    label: {
+                        showColon: true,
+                        text: 'Date de naissance'
+                    }
+                },
+                {dataField: 'nationalite'},
+                {dataField: 'ville'},
+                {dataField: 'lieu_naissance'}]
             },
-            {dataField: 'lieu_naissance'},
-            {dataField: 'tel_resident'},
-            {dataField: 'tel_tuteur'},
-            {
-                editorType: 'dxSelectBox',
-                dataField: 'sexe',
-                editorOptions : {
-                    dataSource : [{val : 'M', txt : 'Masculin'}, {val : 'F', txt : 'Feminin'}],
-                    valueExpr: 'val',
-                    displayExpr: 'txt',
-                    onValueChanged: function (e) {
-                        //alert('Pavillon selectionné : ' + e.value);
-                        setCodeResident(e.value);
-                        return;
-                    } 
-                }
+            {itemType: "group",
+             caption: "Photo",
+             items: 
+                [{
+                    editorType: 'string', 
+                    dataField: 'photo',
+                    label : {visible : false}
+                }]
             },
-            {dataField: 'nationalite'},
-            {dataField: 'ville'},
-            {dataField: 'appartenance_politique'},
-            {dataField: 'recommandation'},
+            {itemType: "group",
+             caption: "Contact",
+             items: [{dataField: 'tel_resident'},
+                     {dataField: 'tel_tuteur'},]
+            },
+            {itemType: "group",
+             caption: "Autres",
+             items: [
+                     {dataField: 'appartenance_politique'},
+                     {dataField: 'recommandation'},]
+            },
             //{editorType : 'dxTextArea', dataField: 'adresse'},
-            {
-             editorType: 'string', 
-             dataField: 'photo',
-             
-             // editorType 'dxFileUploader' causes problem if declared here 
-
-             /*editorOptions : {
-                    selectButtonText: "Select photo",
-                    labelText: 'Drop file here',
-                    multiple: false,
-                    accept: 'image/*',
-                    //accept: "image/*",
-                    uploadMode: "useForm",
-                    name: 'photo',
-                    uploadUrl: '/upload.php',
-                    onValueChanged: function (e) {
-                        alert('File upload changed, new value : ' + e.value);
-                        if (e.value != null) {
-                            if (e.value.size > 150000) {
-                                alert('file too big') ;
-                                //e.element.find(".dx-fileuploader-file-container").eq(0).find(".dx-fileuploader-cancel-button").trigger("dxclick");
-                            }
-                        }
-                        return;
-                    } 
-                },*/ 
-            }],
+            ],
             customizeItem: function (item) {
                     if (item.dataField !== 'photo')
                         return;
                         //alert('customizeItem');
                     item.template = function (data, itemElement) {
                         var value = data.editorOptions.value;
+                        if(value == null){
+                            value = 'assets/img/resident-homme-placeholder.png';
+                        }
                         //$('<input>').attr('type', 'hidden').prop('value', value).appendTo(itemElement);
                         var img = $('<img>').attr('src', value).attr('height', '180px').attr('width', '160px');
                         img.appendTo(itemElement);
@@ -106,7 +105,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                             name: 'photo',
                                             uploadUrl: '/upload.php',
                                             onValueChanged: function (e) {
-                                                alert('File upload changed, new value : ' + e.value);
+                                                //alert('File upload changed, new value : ' + e.value);
                                                 console.log('File upload changed, new value : ');
                                                 console.log(e);
                                                 if (e.value != null) {
@@ -120,9 +119,13 @@ var form = $("#" + sectionId + " .form").dxForm({
                                                 fileReader.onload = function(e) {
                                                     img.attr('src', e.target.result);
                                                     data.editorOptions.value = e.target.result;
+                                                    formData.photo = e.target.result;
+                                                    alert(formData.photo);
+                                                    form.updateData(formData);
                                                     //EL("img").src       = e.target.result;
                                                     //EL("b64").innerHTML = e.target.result;
-                                                    alert('data.editorOptions.value : ' + data.editorOptions.value);
+                                                    //alert('data.editorOptions.value : ' + data.editorOptions.value);
+
                                                 }; 
                                                 var blobFile = e.value[0];
                                                 //var blobFile = e.value;
@@ -138,6 +141,7 @@ $("#" + sectionId + " .button-save").dxButton({
     text: 'Enregistrer',
     onClick: function() {
         var formData = form.option('formData');
+        alert(formData.photo)
         //console.log(formData.toString());
         //return $.post(apiBaseURL, formData);
         Store_Resident.insert(formData);
@@ -145,6 +149,7 @@ $("#" + sectionId + " .button-save").dxButton({
 });
 
 setCodeResident('M');
+
 function setCodeResident(sexe){
     Store_Resident.load()
     .done(function(result) {
