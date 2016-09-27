@@ -121,7 +121,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                     allowDeleting : true,
                                     allowUpdating : true,
                                     mode : 'cell'},
-                                columns : [{dataField: 'id', visible : false}, {dataField: 'type_frais'}, {dataField: 'montant'}, {dataField: 'regle'}]
+                                columns : [{dataField: 'id', visible : false}, {dataField: 'type_frais', sortOrder : 'desc'}, {dataField: 'montant'}, {dataField: 'regle', dataType : 'boolean', label : {text: 'Reglé'}}]
                             }).dxDataGrid('instance');
                             gridDiv.appendTo(itemElement);
                         }
@@ -147,6 +147,7 @@ function loadResidentInfos( resident_code){
                 formData.resident_code = resident_code;
                 formData.resident_id = resident.id;
                 form.updateData(formData);
+                setChambreLibreList(null)
                 loadLastReservationOfResident(resident.id);
                 button_save.option('visible', true);
                 return;
@@ -162,25 +163,43 @@ function loadResidentInfos( resident_code){
 
 // set 'chambres libres' list 
 
-function setChambreLibreList(){
-    
+function setChambreLibreList(residentCurrentChambreId){
+    chambreLibreList = []; // empty
     Store_Chambre.load()
     .done(function(chambres) {
         Store_Pavillon.load()
             .done(function(pavillons) {
-                for (var i = 0; i < chambres.length; i++) {
-                    var chambre = chambres[i];
-                    if(chambre.num == null || chambre.num.length == 0) continue;
-                    var pavillonName = ''; 
-                    for (var j = 0; j < pavillons.length; j++) {
-                        var pavillon = pavillons[j];
-                        if(chambre.pavillon_id == pavillon.id)
-                            pavillonName = pavillon.nom;
-                    }
-                    chambreLibreList.push({val : chambre.id, txt : chambre.num + ' ' + pavillonName})
-                }
-                form.itemOption('chambre_id', {dataSource : chambreLibreList});
-                form.getEditor('chambre_id').option('dataSource', chambreLibreList);
+                Store_Reservation.load()
+                    .done(function(reservations) {
+                        for (var i = 0; i < chambres.length; i++) {
+                            var chambre = chambres[i];
+
+                            var chambreReservee = false;
+
+                            for (var k = 0; k < reservations.length; k++) {
+                                var reservation = reservations[k];
+                                //alert(reservation.chambre_id + ' ' + chambre.id)
+                                if(reservation.chambre_id == chambre.id && residentCurrentChambreId != chambre.id)
+                                    chambreReservee = true;
+                            }
+                            if(!chambreReservee){
+                                
+                                if(chambre.num == null || chambre.num.length == 0) continue;
+                                var pavillonName = ''; 
+                                for (var j = 0; j < pavillons.length; j++) {
+                                    var pavillon = pavillons[j];
+                                    if(chambre.pavillon_id == pavillon.id)
+                                        pavillonName = pavillon.nom;
+                                }
+                                chambreLibreList.push({val : chambre.id, txt : chambre.num + ' ' + pavillonName})
+                            }
+                        }
+                        form.itemOption('chambre_id', {dataSource : chambreLibreList});
+                        form.getEditor('chambre_id').option('dataSource', chambreLibreList);
+                })
+                .fail(function(error) {
+                    // handle error
+                });
             })
             .fail(function(error) {
                 // handle error
@@ -191,7 +210,7 @@ function setChambreLibreList(){
     });
 }
 
-setChambreLibreList();
+setChambreLibreList(null);
 
 // chercher la dernière reservation pour cet étudiant 
 
@@ -202,7 +221,7 @@ function loadLastReservationOfResident(residentId){
         //alert(reservations);
         for (var i = 0; i < reservations.length; i++) {
             var reservation = reservations[i];
-            if(reservation.resident_id == residentId){    
+            if(reservation.resident_id == residentId){
                 console.log('reservation');
                 console.log(reservation);
                 lastReservationOfResident = reservation;
@@ -219,6 +238,7 @@ function loadLastReservationOfResident(residentId){
                     formData.list_frais = result;
                     gridViewListFrais.option('dataSource', result);
                 });
+                setChambreLibreList(lastReservationOfResident.chambre_id);
                 form.updateData(formData);
                 return;
             }
@@ -229,8 +249,10 @@ function loadLastReservationOfResident(residentId){
     });
 }
 
-function resetForm(){
-    
+function resetForm(type){
+    if(type == 'full'){
+        formData.resident_code = '';
+    }
     lastReservationOfResident = null;
     // if no reservation found
     formData.chambre_id = null;
@@ -296,6 +318,7 @@ button_save = $("#" + sectionId + " .button-save").dxButton({
                 //alert('Store_Reservation.update(lastReservationOfResident.id, formData);');
             }
         //});
+        Utils.showToastMsg('success', 'Localisation enregistrée !');
         
     }
 }).dxButton('instance');
@@ -304,11 +327,11 @@ button_remove = $("#" + sectionId + " .button-remove").dxButton({
     text: 'Supprimer',
     visible : false,
     onClick: function() {
-        var formData = form.option('formData');
         //console.log(formData.toString());
         //return $.post(apiBaseURL, formData);
         Store_Reservation.remove(lastReservationOfResident.id);
-        resetForm();
+        Utils.showToastMsg('success', 'Localisation supprimée !');
+        resetForm('full');
     }
 }).dxButton('instance');
 
@@ -321,6 +344,7 @@ button_sortie = $("#" + sectionId + " .button-sortie").dxButton({
         //return $.post(apiBaseURL, formData);
         formData.sortie = true;
         Store_Reservation.update(lastReservationOfResident.id, formData);
+        //Utils.showToastMsg('success', 'Localisation modifiée !');
     }
 }).dxButton('instance');
 

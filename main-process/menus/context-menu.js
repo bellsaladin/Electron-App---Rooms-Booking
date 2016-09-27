@@ -6,9 +6,9 @@ const ipc = electron.ipcMain
 const app = electron.app
 
 const menu = new Menu()
-menu.append(new MenuItem({ label: 'Hello' }))
+menu.append(new MenuItem({ label: 'Option 1' }))
 menu.append(new MenuItem({ type: 'separator' }))
-menu.append(new MenuItem({ label: 'Electron', type: 'checkbox', checked: true }))
+menu.append(new MenuItem({ label: 'Option 2', type: 'checkbox', checked: true }))
 
 app.on('browser-window-created', function (event, win) {
   win.webContents.on('context-menu', function (e, params) {

@@ -25,13 +25,13 @@ var Store = new DevExpress.data.CustomStore({
 
         console.log('Store_' + entityName +' : load()');
         var deferred = $.Deferred();
-        $.get(apiBaseURL + '?transform=1'/*, {  
-            filter: filterOptions,
+        $.get(apiBaseURL + '?transform=1', {  
+            filter : loadOptions.filter,
             sort: sortOptions,
             requireTotalCount: requireTotalCount,
             skip: skip,
             take: take
-        }*/).done(function (result) {
+        }).done(function (result) {
             var rowsCount = 0;
             if(result[entityName]) {
                 rowsCount = result[entityName].length;

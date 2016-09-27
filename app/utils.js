@@ -51,6 +51,13 @@ function convertBooleanToTinyInt(dataArray, colIndex) {
     return dataArray;
 }
 
+function showToastMsg(type, msg) {
+    $("#toast").dxToast({
+        message: msg,
+        type: type,
+        displayTime: 3000
+    });
+}
 
 //module.export {pad}
 
@@ -58,5 +65,6 @@ module.exports = {
     pad: pad,
     fixDate : fixDate,
     toMysqlDateFormat: toMysqlDateFormat,
-    preprocessData : preprocessData
+    preprocessData : preprocessData,
+    showToastMsg : showToastMsg
 };

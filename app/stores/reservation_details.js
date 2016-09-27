@@ -52,7 +52,7 @@ var Store = new DevExpress.data.CustomStore({
         var deferred = $.Deferred();
         //Inserting data
         $.post(apiBaseURL, values).done(function (insertedId) {
-            alert(insertedId + ' insertedId');
+            //alert(insertedId + ' insertedId');
             deferred.resolve(insertedId);
         });
         return deferred.promise();

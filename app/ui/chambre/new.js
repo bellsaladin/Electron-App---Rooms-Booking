@@ -38,7 +38,6 @@ var form = $("#" + sectionId + " .form").dxForm({
             },
             {},
             {dataField: 'num'},
-            {dataField: 'nbr_lits'},
             {
                 editorType: 'dxSelectBox',
                 dataField: 'etage_id',
@@ -67,8 +66,28 @@ var form = $("#" + sectionId + " .form").dxForm({
                     dataSource : Store_Type,
                     valueExpr: 'id',
                     displayExpr: 'nom',
+                    onValueChanged: function (e) {
+                        //var nbrLits = Store_Type.byKey(e.value).nbr_lits;
+                        //alert(nbrLits)
+                        formData.type_id = e.value;
+                        //formData.nbr_lits = nbrLits;
+                            Store_Type.load()
+                            .done(function(typesChambres) {
+                                for( var i =0; i < typesChambres.length ; i++){
+                                    var type = typesChambres[i];
+                                    if(formData.type_id == type.id){
+                                        formData.nbr_lits = type.nbr_lits;
+                                        form.updateData(formData);
+                                        return;
+                                    }
+                                }
+                                
+                            });
+                        return;
+                    } 
                 }
             },
+            {dataField: 'nbr_lits'},
            ],
     colCount: 2
 }).dxForm('instance');
@@ -80,6 +99,7 @@ $("#" + sectionId + " .button-save").dxButton({
         //console.log(formData.toString());
         //return $.post(apiBaseURL, formData);
         Store_Chambre.insert(formData);
+        Utils.showToastMsg('success', 'Chambre enregistrée');
     }
 });
 

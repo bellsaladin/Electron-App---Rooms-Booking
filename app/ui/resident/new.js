@@ -120,7 +120,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                                     img.attr('src', e.target.result);
                                                     data.editorOptions.value = e.target.result;
                                                     formData.photo = e.target.result;
-                                                    alert(formData.photo);
+                                                    //alert(formData.photo);
                                                     form.updateData(formData);
                                                     //EL("img").src       = e.target.result;
                                                     //EL("b64").innerHTML = e.target.result;
@@ -141,10 +141,14 @@ $("#" + sectionId + " .button-save").dxButton({
     text: 'Enregistrer',
     onClick: function() {
         var formData = form.option('formData');
-        alert(formData.photo)
+        //alert(formData.photo)
         //console.log(formData.toString());
         //return $.post(apiBaseURL, formData);
         Store_Resident.insert(formData);
+        Utils.showToastMsg('success', 'Resident enregistré');
+        setCodeResident(formData.sexe); // generate new code
+        // temporary
+        $("#ui-resident-list-section .gridContainer").dxDataGrid('instance').refresh();
     }
 });
 

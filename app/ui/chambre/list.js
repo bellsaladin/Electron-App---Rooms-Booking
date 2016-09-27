@@ -56,11 +56,13 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
     },
      {
         dataField: "pavillon_id",
+        groupIndex: 0,
         caption: "Pavillon",
         lookup: { dataSource: Store_Pavillon, valueExpr: 'id', displayExpr: 'nom' }
     },
     {
         dataField: "etage_id",
+        groupIndex: 1,
         caption: "Etage",
         lookup: { dataSource: Store_Etage, valueExpr: 'id', displayExpr: 'nom' }
     },

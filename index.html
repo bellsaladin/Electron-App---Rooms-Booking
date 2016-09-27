@@ -70,6 +70,8 @@
   <link rel="import" href="sections/ui/resident/list.html">
   <link rel="import" href="sections/ui/resident/list-oDataStore.html">
   <link rel="import" href="sections/ui/resident/new.html">
+  <link rel="import" href="sections/ui/resident/fiche-suivi.html">
+  <link rel="import" href="sections/ui/resident/localisation.html">
   
   <link rel="import" href="sections/ui/chambre/new.html">
   <link rel="import" href="sections/ui/chambre/list.html">
@@ -80,7 +82,6 @@
   <link rel="import" href="sections/ui/type/list.html">
   <link rel="import" href="sections/ui/parametres.html">
 
-  <link rel="import" href="sections/ui/resident/localisation.html">
 </head>
 <body>
 
@@ -151,7 +152,7 @@
       <button type="button" id="button-resident-new" data-section="ui-resident-new" class="nav-button"><em>Nouveau </em> resident</button>
       <button type="button" id="button-resident-list" data-section="ui-resident-list" class="nav-button"><em>Liste </em> des residents</button>
       <!--<button type="button" id="button-resident-list-oDataStore" data-section="ui-resident-list-oDataStore" class="nav-button"><em>Liste (oDataStore)</em> des residents</button>-->
-      <button type="button" id="button-resident-ficheSuivi" data-section="ui-resident-ficheSuivi" class="nav-button">Fiche de suivi</button>
+      <!-- <button type="button" id="button-resident-fiche-suivi" data-section="ui-resident-fiche-suivi" class="nav-button">Fiche de suivi</button> -->
       <button type="button" id="button-resident-localisation" data-section="ui-resident-localisation" class="nav-button">Localisation</button>
     </div>
     <div class="nav-item u-category-native-ui">
@@ -195,23 +196,25 @@
       <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>
     </div>-->
 
-    <footer class="nav-footer">
+    <!--<footer class="nav-footer">
       <button type="button" id="button-about" data-modal="about" class="nav-footer-button">About</button>
       <a class="nav-footer-logo" href="https://github.com" aria-label="Homepage">
-        <!--<svg class="nav-footer-icon"><use xlink:href="assets/img/icons.svg#icon-love"></use></svg>-->
         <small>by Dirigex</small>
       </a>
-    </footer>
+    </footer>-->
   </nav>
 
-  <main class="content js-content"></main>
+  <main class="content js-content">
+    <div id="toast"></div>
+  </main>
+  
 
   <script type="text/javascript">
     //Globalize.locale('de');
-    setTimeout(function(){ document.querySelector('#leftNavbar').classList.add('slide-left'); }, 60000);
-    setTimeout(function(){ document.querySelector('#leftNavbar').classList.add('slide-right'); }, 61000);
+    //setTimeout(function(){ document.querySelector('#leftNavbar').classList.add('slide-left'); }, 60000);
+    //setTimeout(function(){ document.querySelector('#leftNavbar').classList.add('slide-right'); }, 61000);
   </script>
-  <script>    
+  <script>
     require('./assets/imports')
     require('./assets/ex-links')
     require('./assets/nav')
@@ -223,6 +226,7 @@
     require('./app/ui/resident/list-oDataStore')
     require('./app/ui/resident/new')
     require('./app/ui/resident/localisation')
+    require('./app/ui/resident/fiche-suivi')
 
     require('./app/ui/chambre/list')
     require('./app/ui/chambre/new')
@@ -232,9 +236,7 @@
     require('./app/ui/type/list')
     require('./app/ui/categorie/list')
 
-    require('./app/ui/parametres')
-
-    
+    require('./app/ui/parametres')  
   </script>
 </body>
 </html>
