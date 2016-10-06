@@ -2,6 +2,10 @@ const storage = require('electron-json-storage')
 
 // Default to the view that was active the last time the app was open
 storage.get('activeSectionButtonId', function (err, id) {
+  
+  /*if( id == null || id == ''){
+    id = 'button-resident-list';
+  }*/
   if (err) return console.error(err)
 
   if (id && id.length) {

@@ -1,5 +1,7 @@
+let Config = require('../config')
+
 var entityName = 'reservation_details';
-var apiBaseURL = 'http://localhost/_RestAPIs/ResidenceUniversitaire/api.php/' + entityName;
+var apiBaseURL = Config.API_BASE_URL + entityName;
 
 var Store = new DevExpress.data.CustomStore({
     key: "id",

@@ -1,10 +1,4 @@
-
-var config = { {
-    modules : { 
-        {moduleName : 'resident', moduleType : 'CRUD' }, 
-        {moduleName : 'resident', moduleType : 'EntityDetails', rootEntity : 'resident' } 
-    },
-    params : { apiBaseURL : 'http://.../'}
-}}; 
+var config = {};
+config.API_BASE_URL = 'http://localhost/_RestAPIs/ResidenceUniversitaire/api.php/';
 
 module.exports = config;

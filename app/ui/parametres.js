@@ -13,7 +13,10 @@ var form = $("#" + sectionId + " .form").dxForm({
     formData: formData,
     items: [
             {dataField: 'nbr_jours_annulation_localisation'},
-            {dataField: 'titre_application'}
+            {},
+            {dataField: 'exercice_date_debut'},
+            {dataField: 'exercice_date_fin'},
+            //{dataField: 'titre_application'}
            ],
     colCount: 2
 }).dxForm('instance');
