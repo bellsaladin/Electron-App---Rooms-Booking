@@ -5,6 +5,7 @@ const autoUpdater = require('./auto-updater')
 
 const BrowserWindow = electron.BrowserWindow
 const app = electron.app
+const ipcMain = electron.ipcMain
 
 const debug = /--debug/.test(process.argv[2])
 
@@ -50,6 +51,14 @@ function initialize () {
       require('devtron').install()
     }
 
+    pdfWorkerWindow = new BrowserWindow();
+    pdfWorkerWindow.loadURL("file://" + __dirname + "/pdf-worker.html");
+    pdfWorkerWindow.hide();
+    pdfWorkerWindow.webContents.openDevTools();
+    pdfWorkerWindow.on("closed", () => {
+        pdfWorkerWindow = undefined;
+    });
+
     mainWindow.once('ready-to-show', () => {
         /*var sleepSeconds = 2;
         for(var i = 0; i< 1000000000 * sleepSeconds; i++){
@@ -83,6 +92,50 @@ function initialize () {
     }
   })
 }
+
+// retransmit it to workerWindow
+ipcMain.on("printPDF", function (event, content) {
+    console.log(content);
+    pdfWorkerWindow.webContents.send("printPDF", content);
+});
+
+
+/*ipcMain.on('print-to-pdf', function (event) {
+  const pdfPath = path.join(os.tmpdir(), 'print.pdf')
+  const win = BrowserWindow.fromWebContents(event.sender)
+  // Use default printing options
+  win.webContents.printToPDF({}, function (error, data) {
+    if (error) throw error
+    fs.writeFile(pdfPath, data, function (error) {
+      if (error) {
+        throw error
+      }
+      shell.openExternal('file://' + pdfPath)
+      event.sender.send('wrote-pdf', pdfPath)
+    })
+  })
+})*/
+
+const os = require('os')
+const fs = require('fs')
+const shell = electron.shell
+
+// when worker window is ready
+ipcMain.on("readyToPrintPDF", function(event){
+    const pdfPath = path.join(os.tmpdir(), 'print.pdf');
+    // Use default printing options
+    pdfWorkerWindow.webContents.printToPDF({}, function (error, data) {
+        if (error) throw error
+        fs.writeFile(pdfPath, data, function (error) {
+            if (error) {
+                throw error
+            }
+            shell.openItem(pdfPath)
+            event.sender.send('wrote-pdf', pdfPath)
+        })
+    })
+});
+
 
 // Make this app a single instance app.
 //

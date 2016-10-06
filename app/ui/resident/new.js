@@ -1,6 +1,7 @@
 let Store_Resident = require('../../stores/resident')
 let Utils = require('../../utils')
 
+var photoResident = null;
 
 var sectionId = 'ui-resident-new-section';
 //let shortcuts = document.querySelectorAll('kbd.normalize-to-platform')
@@ -93,10 +94,11 @@ var form = $("#" + sectionId + " .form").dxForm({
                             value = 'assets/img/resident-homme-placeholder.png';
                         }
                         //$('<input>').attr('type', 'hidden').prop('value', value).appendTo(itemElement);
-                        var img = $('<img>').attr('src', value).attr('height', '180px').attr('width', '160px');
-                        img.appendTo(itemElement);
+                        photoResident = $('<img>').attr('src', value).attr('height', '180px').attr('width', '160px');
+                        photoResident.appendTo(itemElement);
                         //$('<div>').html(value).appendTo(itemElement);
-                        $('<div>').dxFileUploader({selectButtonText: "Parcourir",
+                        var fileUploaderContainer = $('<div>');
+                        var photoUploader = fileUploaderContainer.dxFileUploader({selectButtonText: "Parcourir",
                                             labelText: 'Ou glissez la par ici',
                                             multiple: false,
                                             accept: 'image/*',
@@ -115,22 +117,19 @@ var form = $("#" + sectionId + " .form").dxForm({
                                                     }
                                                 }
                                                 //data.editorOptions.value = e.value; // convert to base64
-                                                var fileReader = new FileReader();
-                                                fileReader.onload = function(e) {
-                                                    img.attr('src', e.target.result);
-                                                    data.editorOptions.value = e.target.result;
-                                                    formData.photo = e.target.result;
-                                                    //alert(formData.photo);
-                                                    form.updateData(formData);
-                                                    //EL("img").src       = e.target.result;
-                                                    //EL("b64").innerHTML = e.target.result;
-                                                    //alert('data.editorOptions.value : ' + data.editorOptions.value);
-
-                                                }; 
+                                                
                                                 var blobFile = e.value[0];
                                                 //var blobFile = e.value;
                                                 fileReader.readAsDataURL( blobFile );  
                                             } 
+                        }).dxFileUploader('instance');
+                        fileUploaderContainer.appendTo(itemElement);
+                        $('<div>').dxButton({
+                            text: 'Camera',
+                            onClick: function() {
+
+                                popupCamera.show();
+                            }
                         }).appendTo(itemElement);
                     }
                 },
@@ -177,4 +176,149 @@ function setCodeResident(sexe){
     .fail(function(error) {
         // handle error
     });
+}
+
+// file reader which does convert from blob to base64
+var fileReader = new FileReader();
+fileReader.onload = function(e) {
+    photoResident.attr('src', e.target.result);
+    //data.editorOptions.value = e.target.result;
+    formData.photo = e.target.result;
+    //alert(formData.photo);
+    form.updateData('photo', e.target.result);
+    //EL("photoResident").src       = e.target.result;
+    //EL("b64").innerHTML = e.target.result;
+    //alert('data.editorOptions.value : ' + data.editorOptions.value);
+}; 
+
+// WebCamera related code
+
+var popupCamera = null,
+    popupCamera_options = {
+        width: 'auto',
+        height: 'auto',
+        onShown : function(e){
+            initWebCam();
+        },
+        showTitle: true,
+        title: "Prise de photo",
+        visible: false,
+        dragEnabled: false,
+        closeOnOutsideClick: true
+};
+
+//popupCamera && $(".popup-camera").remove();
+$popupContainer = $("#" + sectionId + " .popup-camera");
+popupCamera = $popupContainer.dxPopup(popupCamera_options).dxPopup("instance");
+
+
+
+var width = 320;    // We will scale the photo width to this
+var height = 0;     // This will be computed based on the input stream
+
+// |streaming| indicates whether or not we're currently streaming
+// video from the camera. Obviously, we start at false.
+
+var streaming = false;
+
+// The various HTML elements we need to configure or control. These
+// will be set by the startup() function.
+
+var video = null;
+var canvas = null;
+var button_capture = null;
+
+function initWebCam() {
+    video = document.getElementById('video');
+    canvas = document.getElementById('canvas');
+    button_capture = document.getElementById('button_capture');
+
+    navigator.getMedia = ( navigator.getUserMedia ||
+                            navigator.webkitGetUserMedia ||
+                            navigator.mozGetUserMedia ||
+                            navigator.msGetUserMedia);
+
+    navigator.getMedia(
+        {
+        video: true,
+        audio: false
+        },
+        function(stream) {
+        if (navigator.mozGetUserMedia) {
+            video.mozSrcObject = stream;
+        } else {
+            var vendorURL = window.URL || window.webkitURL;
+            video.src = vendorURL.createObjectURL(stream);
+        }
+        video.play();
+        },
+        function(err) {
+        console.log("An error occured! " + err);
+        }
+    );
+
+    video.addEventListener('canplay', function(ev){
+        if (!streaming) {
+        height = video.videoHeight / (video.videoWidth/width);
+        
+        // Firefox currently has a bug where the height can't be read from
+        // the video, so we will make assumptions if this happens.
+        
+        if (isNaN(height)) {
+            height = width / (4/3);
+        }
+        
+        video.setAttribute('width', width);
+        video.setAttribute('height', height);
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
+        streaming = true;
+        }
+    }, false);
+
+    button_capture.addEventListener('click', function(ev){
+        takePicture();
+        popupCamera.hide();
+        ev.preventDefault();
+    }, false);
+
+    clearphoto();
+}
+
+// Fill the photo with an indication that none has been
+// captured.
+
+function clearphoto() {
+    var context = canvas.getContext('2d');
+    context.fillStyle = "#AAA";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    var data = canvas.toDataURL('image/png');
+    
+    photoResident.attr('src', data);
+    formData.photo = data;
+    form.updateData('photo', data);
+}
+
+// Capture a photo by fetching the current contents of the video
+// and drawing it into a canvas, then converting that to a PNG
+// format data URL. By drawing it on an offscreen canvas and then
+// drawing that to the screen, we can change its size and/or apply
+// other changes before drawing it.
+
+function takePicture() {
+    var context = canvas.getContext('2d');
+    if (width && height) {
+        canvas.width = width;
+        canvas.height = height;
+        context.drawImage(video, 0, 0, width, height);
+
+        var data = canvas.toDataURL('image/png');
+        photoResident.attr('src', data);
+        formData.photo = data;
+        form.updateData('photo', data);
+
+    } else {
+        clearphoto();
+    }
 }
