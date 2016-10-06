@@ -205,18 +205,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                         var link = $('<a href="#">Imprimer</a>');
                                         element.append(link);
                                         link.click(function (e){
-                                            // printPdf("<p> Nom :  " + formData.resident_infos +" </p>");
-                                            var content = '';
-                                            content += '<div><center>Cité Univesitaire El Massira<br/>Kénitra</center></div><br/><br/>';
-                                            content += '<p>Nom complet :  ' + formData.resident_infos +'</p>';
-                                            content += '<p>Num chambre :  ' + formData.chambre_id +'</p>';
-                                            var date = new Date();
-                                            date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
-                                            content += '<p>Date :  ' + date +'</p><br><br>';
-                                            content += '<p style="margin-left:120px;"><u>Signature</u></p><br><br>';
-                                            // put border on the content
-                                            content = '<div style="margin:50px; padding :10px; border:1px solid silver">' + content + '</div>';
-                                            printPdf(content);
+                                            print_recu_reglement(options.data);
                                         });
 
                                         container.append(element);
@@ -331,6 +320,7 @@ function loadLastReservationOfResident(residentId){
                 formData.date_sortie      = Utils.fixDate(lastReservationOfResident.date_sortie);
                 button_remove.option('visible', true);
                 button_cloture.option('visible', true);
+                button_imprimer_recu_inscription.option('visible', true);
                 button_reglement.option('visible', true);
                 form.itemOption('list_frais', 'visible', true);
                 form.itemOption('reglement', 'visible', true);
@@ -407,6 +397,7 @@ function resetForm(type){
     button_remove.option('visible', false);
     button_reglement.option('visible', false);
     button_cloture.option('visible', false);
+    button_imprimer_recu_inscription.option('visible', false);
     form.itemOption('list_frais', 'visible', false);
     form.itemOption('reglement', 'visible', false);
     
@@ -658,9 +649,55 @@ button_cloture = $("#" + sectionId + " .button-cloture").dxButton({
     }
 }).dxButton('instance');
 
-const ipcRenderer = require("electron").ipcRenderer;
 
-function printPdf(content) {
-    // send Command To PdfWorkerWindow
-    ipcRenderer.send("printPDF", content);
+var button_imprimer_recu_inscription = null;
+
+button_imprimer_recu_inscription = $("#" + sectionId + " .button-imprimer-recu-inscription").dxButton({
+    text: 'Imprimer reçu inscription',
+    visible : false,
+    onClick: function() {
+        print_recu_inscription();
+    }
+}).dxButton('instance');
+
+
+
+
+function print_recu_inscription(){
+    var content = '';
+    content += '<div><center>Cité Univesitaire El Massira<br/>Kénitra</center></div><br/><br/>';
+    content += '<p>Nom complet :  ' + formData.resident_infos +'</p>';
+    content += '<p>Num chambre :  ' + formData.chambre_id +'</p>';
+    var date = new Date();
+    date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    content += '<p>Date :  ' + date +'</p><br><br>';
+    content += '<p style="margin-left:250px;"><u>Signature</u></p><br><br>';
+    // put border on the content
+    content = '<div style="margin:50px; padding :10px; border:1px solid silver">' + content + '</div>';
+    Utils.printPdf(content);
+}
+
+function print_recu_reglement( reglement){
+    var num_quittance = reglement.num_quittance;
+    var listFrais = reglement.listFrais;
+    var date = new Date();
+    date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    var content = '';
+    content += '<div><center>Cité Univesitaire El Massira<br/>Kénitra</center></div><br/><br/>';
+    content += '<p>Date :  ' + reglement.date +'</p><br><br>';
+    content += '<p>Num quittance :  ' + num_quittance +'</p>';
+    content += '<p>Nom complet :  ' + formData.resident_infos +'</p>';
+    content += '<table style="margin-left:50px;">';
+    for(var i = 0; i< listFrais.length; i++){
+        var frais = listFrais[i];
+        content += '<tr>';
+        content += '<td> - ' + frais.type_frais+ '</td>';
+        content += '<td>' + frais.montant+ ' DH </td>';
+        content += '</tr>';
+    }
+    content += '</table>';
+    content += '<p style="margin-left:250px;"><u>Signature</u></p><br><br>';
+    // put border on the content
+    content = '<div style="margin:50px; padding :10px; border:1px solid silver">' + content + '</div>';
+    Utils.printPdf(content);
 }

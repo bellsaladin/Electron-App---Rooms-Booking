@@ -102,7 +102,14 @@ function isArray(obj) {
   return true;
 }
 
-//module.export {pad}
+
+// print pdf
+const ipcRenderer = require("electron").ipcRenderer;
+
+function printPdf(content) {
+    // send Command To PdfWorkerWindow
+    ipcRenderer.send("printPDF", content);
+}
 
 module.exports = {
     pad: pad,
@@ -110,5 +117,6 @@ module.exports = {
     toMysqlDateFormat: toMysqlDateFormat,
     preprocessData : preprocessData,
     showToastMsg : showToastMsg,
-    deepCopy : deepCopy
+    deepCopy : deepCopy,
+    printPdf : printPdf
 };
