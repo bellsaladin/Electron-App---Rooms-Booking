@@ -80,6 +80,8 @@
   <link rel="import" href="sections/ui/etage/list.html">
   <link rel="import" href="sections/ui/categorie/list.html">
   <link rel="import" href="sections/ui/type/list.html">
+  
+  <link rel="import" href="sections/ui/rapports/list.html">
   <link rel="import" href="sections/ui/parametres.html">
 
 </head>
@@ -168,6 +170,7 @@
       <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>-->
       <!--<button type="button" id="button-pagination" data-section="ui-pagination" class="nav-button">Pagination</button>-->
     </div>
+    <button type="button" id="button-rapports-list" data-section="ui-rapports-list" class="nav-button">Rapports</button>
     <div class="nav-item u-category-native-ui">
       <h5 class="nav-category">
         <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
@@ -235,6 +238,8 @@
     require('./app/ui/etage/list')
     require('./app/ui/type/list')
     require('./app/ui/categorie/list')
+
+    require('./app/ui/rapports/list')
 
     require('./app/ui/parametres')  
   </script>

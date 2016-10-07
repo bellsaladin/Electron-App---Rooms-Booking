@@ -1,4 +1,5 @@
 let Store_Resident = require('../../stores/resident')
+let Store_Countries = require('../../stores/countries')
 let Utils = require('../../utils')
 
 var photoResident = null;
@@ -7,6 +8,7 @@ var sectionId = 'ui-resident-new-section';
 //let shortcuts = document.querySelectorAll('kbd.normalize-to-platform')
 var formData = {
     //id: "1",
+    etranger : false,
     code : '',
     num_cin : '',
     nom: "",
@@ -16,7 +18,7 @@ var formData = {
     tel_resident : '',
     tel_tuteur : '',
     sexe : 'M',
-    nationalite : '',
+    nationalite : 'Maroc',
     ville : '',
     appartenance_politique : 'Non',
     recommandation : 'Non',
@@ -47,7 +49,18 @@ var form = $("#" + sectionId + " .form").dxForm({
                         } 
                     }
                 },
-                {dataField: 'num_cin'},
+                {dataField: 'etranger', editorType : 'dxCheckBox',
+                    editorOptions : {
+                        onValueChanged: function (e) {
+                            if(e.value == true){
+                                form.itemOption('Informations personnelles.num_cin', {label : {text  :  'Num Passeport'}});
+                            }else{
+                                form.itemOption('Informations personnelles.num_cin', {label : {text  :  'Num CIN'}});
+                            }
+                        } 
+                    }
+                },
+                {dataField: 'num_cin', label : {text : 'Num CIN'} },
                 {dataField: 'nom'},
                 {dataField: 'prenom'},
                 {
@@ -58,7 +71,21 @@ var form = $("#" + sectionId + " .form").dxForm({
                         text: 'Date de naissance'
                     }
                 },
-                {dataField: 'nationalite'},
+                //{dataField: 'nationalite'},
+                {
+                    editorType: 'dxSelectBox',
+                    dataField: 'nationalite',
+                    label : {text : 'Pays'},
+                    editorOptions : {
+                        dataSource : Store_Countries,
+                        valueExpr: 'name',
+                        displayExpr: 'name',
+                        searchEnabled : true,
+                        searchMode : 'contains',
+                        activeStateEnabled : false,
+                        deferRendering : false
+                    }
+                },
                 {dataField: 'ville'},
                 {dataField: 'lieu_naissance'}]
             },
@@ -140,9 +167,9 @@ $("#" + sectionId + " .button-save").dxButton({
     text: 'Enregistrer',
     onClick: function() {
         var formData = form.option('formData');
-        //alert(formData.photo)
-        //console.log(formData.toString());
-        //return $.post(apiBaseURL, formData);
+
+        formData.etranger = (formData.etranger== true)?1:0; // important conversion
+
         Store_Resident.insert(formData);
         Utils.showToastMsg('success', 'Resident enregistré');
         setCodeResident(formData.sexe); // generate new code

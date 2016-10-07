@@ -102,7 +102,6 @@ function isArray(obj) {
   return true;
 }
 
-
 // print pdf
 const ipcRenderer = require("electron").ipcRenderer;
 
