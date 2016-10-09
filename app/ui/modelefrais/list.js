@@ -48,6 +48,7 @@ var dataGrid = $("#ui-modelefrais-list-section .gridContainer").dxDataGrid({
     headerFilter: {
         visible: true
     },
+    grouping : {autoExpandAll : false, allowCollapsing : true},
     noDataText : '',
     paging : {enabled : false},
     columns: [

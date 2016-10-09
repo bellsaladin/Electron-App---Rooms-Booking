@@ -172,3 +172,13 @@ kbd {
 .table-no-border tr {height: 40px;}
 .table-no-border td {border:none; text-align: left;}
 
+
+#connected-user{
+      position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 310px;
+    background: #525252;
+    color: #fff;
+    padding: 10px;
+}

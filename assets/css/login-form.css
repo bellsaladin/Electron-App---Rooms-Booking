@@ -17,9 +17,8 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 	background: transparent;
 }
 body {
-	background: #DCDDDF url(http://cssdeck.com/uploads/media/items/7/7AF2Qzt.png);
 	color: #000;
-	font: 14px Arial;
+	font: 12px Arial;
 	margin: 0 auto;
 	padding: 0;
 	position: relative;
@@ -104,14 +103,7 @@ form:after {
 }
 #content:after,
 #content:before {
-	background: #f9f9f9;
-	background: -moz-linear-gradient(top,  rgba(248,248,248,1) 0%, rgba(249,249,249,1) 100%);
-	background: -webkit-linear-gradient(top,  rgba(248,248,248,1) 0%,rgba(249,249,249,1) 100%);
-	background: -o-linear-gradient(top,  rgba(248,248,248,1) 0%,rgba(249,249,249,1) 100%);
-	background: -ms-linear-gradient(top,  rgba(248,248,248,1) 0%,rgba(249,249,249,1) 100%);
-	background: linear-gradient(top,  rgba(248,248,248,1) 0%,rgba(249,249,249,1) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#f9f9f9',GradientType=0 );
-	border: 1px solid #c4c6ca;
+
 	content: "";
 	display: block;
 	height: 100%;
@@ -119,7 +111,7 @@ form:after {
 	position: absolute;
 	width: 100%;
 }
-#content:after {
+/*#content:after {
 	-webkit-transform: rotate(2deg);
 	-moz-transform: rotate(2deg);
 	-ms-transform: rotate(2deg);
@@ -136,7 +128,7 @@ form:after {
 	transform: rotate(-3deg);
 	top: 0;
 	z-index: -2;
-}
+}*/
 #content form { margin: 0 20px; position: relative }
 #content form input[type="text"],
 #content form input[type="password"] {
@@ -155,7 +147,7 @@ form:after {
 	-ms-transition: all 0.5s ease;
 	-o-transition: all 0.5s ease;
 	transition: all 0.5s ease;
-	background: #eae7e7 url(http://cssdeck.com/uploads/media/items/8/8bcLQqF.png) no-repeat;
+	background: #eae7e7 no-repeat;
 	border: 1px solid #c8c8c8;
 	color: #777;
 	font: 13px Helvetica, Arial, sans-serif;
@@ -197,8 +189,7 @@ form:after {
 	border: 1px solid #D69E31;
 	color: #85592e;
 	cursor: pointer;
-	float: left;
-	font: bold 15px Helvetica, Arial, sans-serif;
+	font: bold 13px Helvetica, Arial, sans-serif;
 	height: 35px;
 	margin: 20px 0 35px 15px;
 	position: relative;
@@ -243,7 +234,7 @@ form:after {
 	padding: 15px 0;
 }
 .button a {
-	background: url(http://cssdeck.com/uploads/media/items/8/8bcLQqF.png) 0 -112px no-repeat;
+	/*background: url(http://cssdeck.com/uploads/media/items/8/8bcLQqF.png) 0 -112px no-repeat;*/
 	color: #7E7E7E;
 	font-size: 17px;
 	padding: 2px 0 2px 40px;

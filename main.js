@@ -34,9 +34,9 @@ function initialize () {
     }
 
     // load the intro window
-    introWindow = new BrowserWindow({ width: 800,
-                                      minWidth: 680,
-                                      height: 580,
+    introWindow = new BrowserWindow({ width: 460,
+                                      minWidth: 380,
+                                      height: 320,
                                       title: app.getName()})
     introWindow.loadURL(path.join('file://', __dirname, '/intro.html'))
     //introWindow.maximize()
@@ -102,11 +102,13 @@ ipcMain.on("printPDF", function (event, content) {
 // retransmit it to 
 ipcMain.on("loginSuccessful", function (event, user) {
     console.log(user);
-    mainWindow.once('ready-to-show', () => {
+    //mainWindow.once('ready-to-show', () => {
       introWindow.hide();
       introWindow.destroy();
       mainWindow.show();
-    })
+      mainWindow.webContents.send('set-data', user);
+
+    //})
     
 });
 

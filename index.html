@@ -202,6 +202,10 @@
       <button type="button" id="button-service-list" data-section="ui-service-list" class="nav-button">Services</button>
     </div>
 
+    <div id="connected-user">
+        Session : <b class="username"></b>
+    </div>
+
     <!--<div class="nav-item u-category-native-ui">
       <h5 class="nav-category">
         <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
@@ -260,6 +264,13 @@
     require('./app/ui/rapports/list')
 
     require('./app/ui/parametres')  
+  </script>
+
+  <script>
+    const ipcRenderer = require("electron").ipcRenderer;
+    ipcRenderer.on("set-data", (event, user) => {
+      $('#connected-user .username').html( user.nom_utilisateur)
+    });
   </script>
 </body>
 </html>

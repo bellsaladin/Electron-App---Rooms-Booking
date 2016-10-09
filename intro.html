@@ -19,30 +19,59 @@
     } catch(e) {}
   </script>
 
+<script type="text/javascript" src="assets/devXtreme/js/knockout-3.4.0.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr/event.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr/supplemental.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/cldr/unresolved.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/message.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/number.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/date.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/globalize/currency.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/jszip.min.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/dx.viz-web.js"></script>
+  <script type="text/javascript" src="assets/devXtreme/js/underscore-1.5.1.min.js"></script>
+
 </head>
 <body>
     <div class="container">
         <section id="content">
             <form action="">
-                <h1>Login Form</h1>
                 <div>
-                    <input type="text" placeholder="Username" required="" id="username" />
+                    <input type="text" placeholder="Nom d'utilisateur" required="" id="username" />
                 </div>
                 <div>
-                    <input type="password" placeholder="Password" required="" id="password" />
+                    <input type="password" placeholder="Mot de passe" required="" id="password" />
                 </div>
                 <div>
                     <input id="login_button" type="submit" value="Se connecter" />
                 </div>
             </form>
             <script>
-                //var Store_User = require('./app/stores/utilisateur')
+                var Store_User = require('./app/stores/utilisateur')
                 const ipcRenderer = require("electron").ipcRenderer;
                 // send Command To PdfWorkerWindow
-                $('#login_button').click(function (){
-                    alert('connexion faite');
-                    var user = {'username' : 'Salah-Eddine'};
-                    ipcRenderer.send("loginSuccessful", user);
+                $('#login_button').click(function (event){
+                    event.preventDefault();
+
+                    var nom_utilisateur = $('#username').val();
+                    var mot_de_passe = $('#password').val();
+                    Store_User.load({filter : 'nom_utilisateur,eq,' + nom_utilisateur}).then(function (data){
+                        if(data.length > 0){
+                            user = data[0];
+                            if(mot_de_passe == user.mot_de_passe){
+                                if(user.active == "0"){
+                                    alert('Ce compte a été désactivé ! Veuillez conctacter le responsable.' );
+                                }else{
+                                    ipcRenderer.send("loginSuccessful", user);
+                                }
+                                return;// connexion faite    
+                            }
+                        }
+                        alert('Nom d\'utilisateur ou mot de passe invalides' );
+                    });
+                    
                 });
                 
             </script>
