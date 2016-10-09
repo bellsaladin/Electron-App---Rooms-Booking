@@ -1,19 +1,19 @@
 //let Store_Chambre = require('../../stores/chambre')
-let Store_Pavillon = require('../../stores/pavillon')
-//let Store_Etage = require('../../stores/etage')
+//let Store_Pavillon = require('../../stores/pavillon')
+let Store_Service = require('../../stores/service')
+let Store_Utilisateur = require('../../stores/utilisateur')
 //let Store_Categorie = require('../../stores/categorie')
 //let Store_Type = require('../../stores/type')
 
-var dataGrid = $("#ui-pavillon-list-section .gridContainer").dxDataGrid({
-    dataSource: Store_Pavillon,
-    masterDetail : {enabled : true},
+var dataGrid = $("#ui-utilisateur-list-section .gridContainer").dxDataGrid({
+    dataSource: Store_Utilisateur,
+    masterDetail : {enabled : false},
     rowAlternationEnabled : true,
     showRowLines : true,
     showColumnLines : false,
     selection: {
         mode: "multiple"
     },
-    noDataText : '',
     remoteOperations : {
         filtering : false,
         grouping : false,
@@ -21,6 +21,7 @@ var dataGrid = $("#ui-pavillon-list-section .gridContainer").dxDataGrid({
         sorting : false,
         summary : false,
     },
+    noDataText : '',
     loadPanel : {
         enabled : true,
         height : 90,
@@ -50,12 +51,17 @@ var dataGrid = $("#ui-pavillon-list-section .gridContainer").dxDataGrid({
     headerFilter: {
         visible: true
     },
-    columns: [{
-        dataField: "id",
-    }, {
-        dataField: "code"
-    },
+    columns: [
+    { dataField: "id",}, 
+    { dataField: "nom_utilisateur"},
+    { dataField: "mot_de_passe", editorType : 'dxTextBox', editorOptions : {  mode: 'password'} },
+    { dataField: "nom"},
+    { dataField: "prenom"},
     {
-        dataField: "nom"
-    }]
+        dataField: 'service_id',
+        editorType: 'dxSelectBox',
+        caption : 'Service',
+        lookup: { dataSource: Store_Service, valueExpr: 'id', displayExpr: 'nom' }
+    },
+    {dataField: 'active', dataType : 'boolean', caption : 'Activé'}]
 }).dxDataGrid('instance');

@@ -34,9 +34,12 @@ function initialize () {
     }
 
     // load the intro window
-    introWindow = new BrowserWindow(windowOptions)
+    introWindow = new BrowserWindow({ width: 800,
+                                      minWidth: 680,
+                                      height: 580,
+                                      title: app.getName()})
     introWindow.loadURL(path.join('file://', __dirname, '/intro.html'))
-    introWindow.maximize()
+    //introWindow.maximize()
     introWindow.once('ready-to-show', () => {
           introWindow.show();
     })
@@ -51,6 +54,14 @@ function initialize () {
       require('devtron').install()
     }
 
+    mainWindow.once('ready-to-show', () => {
+        //introWindow.hide();
+        //introWindow.destroy();
+        //mainWindow.show();
+    })
+
+    // pdf worker window
+
     pdfWorkerWindow = new BrowserWindow();
     pdfWorkerWindow.loadURL("file://" + __dirname + "/pdf-worker.html");
     pdfWorkerWindow.hide();
@@ -58,17 +69,6 @@ function initialize () {
     pdfWorkerWindow.on("closed", () => {
         pdfWorkerWindow = undefined;
     });
-
-    mainWindow.once('ready-to-show', () => {
-        /*var sleepSeconds = 2;
-        for(var i = 0; i< 1000000000 * sleepSeconds; i++){
-          // sleep    
-        }*/
-        introWindow.hide();
-        introWindow.destroy();
-        mainWindow.show();
-        // load the application after the intro
-    })
 
     mainWindow.on('closed', function () {
       mainWindow = null
@@ -99,6 +99,16 @@ ipcMain.on("printPDF", function (event, content) {
     pdfWorkerWindow.webContents.send("printPDF", content);
 });
 
+// retransmit it to 
+ipcMain.on("loginSuccessful", function (event, user) {
+    console.log(user);
+    mainWindow.once('ready-to-show', () => {
+      introWindow.hide();
+      introWindow.destroy();
+      mainWindow.show();
+    })
+    
+});
 
 /*ipcMain.on('print-to-pdf', function (event) {
   const pdfPath = path.join(os.tmpdir(), 'print.pdf')

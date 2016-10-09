@@ -49,6 +49,7 @@ var dataGrid = $("#ui-resident-list-section .gridContainer").dxDataGrid({
         sorting : false,
         summary : false,
     },
+    noDataText : '',
     loadPanel : {
         enabled : true,
         height : 90,

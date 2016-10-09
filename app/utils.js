@@ -110,6 +110,15 @@ function printPdf(content) {
     ipcRenderer.send("printPDF", content);
 }
 
+function printPdf(content) {
+    // send Command To PdfWorkerWindow
+    ipcRenderer.send("printPDF", content);
+}
+
+
+function shallowCopy(object){
+    return jQuery.extend({},object);
+}
 module.exports = {
     pad: pad,
     fixDate : fixDate,
@@ -117,5 +126,6 @@ module.exports = {
     preprocessData : preprocessData,
     showToastMsg : showToastMsg,
     deepCopy : deepCopy,
-    printPdf : printPdf
+    printPdf : printPdf,
+    shallowCopy : shallowCopy
 };

@@ -46,6 +46,7 @@ var dataGrid = $("#ui-etage-list-section .gridContainer").dxDataGrid({
         width: 240,
         placeholder: "Search..."
     },
+    noDataText : '',
     headerFilter: {
         visible: true
     },

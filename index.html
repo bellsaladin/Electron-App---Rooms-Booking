@@ -80,7 +80,11 @@
   <link rel="import" href="sections/ui/etage/list.html">
   <link rel="import" href="sections/ui/categorie/list.html">
   <link rel="import" href="sections/ui/type/list.html">
+  <link rel="import" href="sections/ui/modelefrais/list.html">
   
+  <link rel="import" href="sections/ui/utilisateur/list.html">
+  <link rel="import" href="sections/ui/service/list.html">
+
   <link rel="import" href="sections/ui/rapports/list.html">
   <link rel="import" href="sections/ui/parametres.html">
 
@@ -170,7 +174,7 @@
       <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>-->
       <!--<button type="button" id="button-pagination" data-section="ui-pagination" class="nav-button">Pagination</button>-->
     </div>
-    <button type="button" id="button-rapports-list" data-section="ui-rapports-list" class="nav-button">Rapports</button>
+    <button type="button" id="button-rapports-list" data-section="ui-rapports-list" class="nav-item u-category-native-ui nav-button">Rapports</button>
     <div class="nav-item u-category-native-ui">
       <h5 class="nav-category">
         <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
@@ -180,12 +184,22 @@
       <button type="button" id="button-etage-list" data-section="ui-etage-list" class="nav-button">Etages</button>
       <button type="button" id="button-categorie-list" data-section="ui-categorie-list" class="nav-button">Categories</button>
       <button type="button" id="button-type-list" data-section="ui-type-list" class="nav-button">Types de chambres</button>
+      <button type="button" id="button-modelefrais-list" data-section="ui-modelefrais-list" class="nav-button">Frais de réservation</button>
       <button type="button" id="button-parametres" data-section="ui-parametres" class="nav-button">Paramètres</button>
       <!--<button type="button" id="button-crash-hang" data-section="crash-hang" class="nav-button">Handling window <em>crashes and hangs</em></button>
       <button type="button" id="button-ex-links-file-manager" data-section="ex-links-file-manager" class="nav-button">Open <em>external links</em> or system <em>file manager</em></button>
       <button type="button" id="button-dialogs" data-section="dialogs" class="nav-button">Use system <em>dialogs</em></button>
       <button type="button" id="button-tray" data-section="tray" class="nav-button">Put your app in the <em>tray</em></button>-->
       <!--<button type="button" id="button-pagination" data-section="ui-pagination" class="nav-button">Pagination</button>-->
+    </div>
+
+    <div class="nav-item u-category-native-ui">
+      <h5 class="nav-category">
+        <svg class="nav-icon"><use xlink:href="assets/img/icons.svg#icon-menu"></use></svg>
+        Administration
+      </h5>
+      <button type="button" id="button-utilisateur-list" data-section="ui-utilisateur-list" class="nav-button">Utilisateurs</button>
+      <button type="button" id="button-service-list" data-section="ui-service-list" class="nav-button">Services</button>
     </div>
 
     <!--<div class="nav-item u-category-native-ui">
@@ -238,6 +252,10 @@
     require('./app/ui/etage/list')
     require('./app/ui/type/list')
     require('./app/ui/categorie/list')
+    require('./app/ui/modelefrais/list')
+    
+    require('./app/ui/service/list')
+    require('./app/ui/utilisateur/list')
 
     require('./app/ui/rapports/list')
 

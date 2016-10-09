@@ -40,7 +40,7 @@ var listeFrais_model = [
                        {list_order : 14, type_frais : '07/2017', montant : '350', regle : false},
                       ];
 
-var listeFrais_snapshot = Utils.deepCopy(listeFrais_model); // original important snapshot of 'listFrais'
+var listeFrais = Utils.shallowCopy(listeFrais_model); // original important snapshot of 'listFrais'
 
 var listeFraisReglement = [];
 
@@ -60,8 +60,32 @@ var formData = {
     date_inscription : '2016-01-01',
     date_entree : '2016-01-01',
     date_sortie : '2016-01-01',
-    list_frais : listeFrais_model,
+    list_frais : listeFrais,
     reglement : reglementData
+}
+
+// logic functions 
+
+
+function updateListeFraisReglement(list_frais){
+    listeFraisReglement = [];
+    for(var i=0; i < list_frais.length ; i++){
+        var frais = list_frais[i];
+        if(!frais.regle)
+            listeFraisReglement.push(Utils.shallowCopy(frais));
+    }
+}
+// util function 
+
+function findFraisInListe(list, val){
+    //alert('findFraisInListe' + list);
+    for(var i = 0 ; i < list.length; i++){
+        //alert(list[i].type_frais)
+        if (list[i].type_frais == val){
+            //alert('found : ' +list[i].type_frais + ';  regle ? : '  + list[i].regle)
+            return list[i];
+        }
+    }
 }
 
 // form ui
@@ -133,6 +157,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                             var gridDiv = $('<div>');
                             gridViewListFrais = gridDiv.dxDataGrid({
                                 dataSource: value, 
+                                noDataText : '',
                                 sorting : {mode : 'none'},
                                 editing: {
                                     allowAdding : false,
@@ -183,6 +208,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                             var gridDiv = $('<div>');
                             gridViewReglement = gridDiv.dxDataGrid({
                                 dataSource: value,
+                                noDataText : '',
                                 sorting : {mode :'none'},
                                 selection : { mode : 'single'},
                                 editing: {
@@ -202,7 +228,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                             var frais = listFrais[i];
                                             element.append($('<span> &gt;  ' + frais.type_frais + ' : ' + frais.montant + ' DH </span><br/>'));    
                                         }
-                                        var link = $('<a href="#">Imprimer</a>');
+                                        var link = $('<a href="javascript:void(0)">Imprimer</a>');
                                         element.append(link);
                                         link.click(function (e){
                                             print_recu_reglement(options.data);
@@ -214,6 +240,29 @@ var form = $("#" + sectionId + " .form").dxForm({
                                 onRowRemoving : function(e) {
                                     var data = e.data;
                                     Store_Reglement.remove(data.id);
+                                    // décocher le champ 'reglé' sur la liste des frais
+                                    console.log(data);
+                                    
+                                    var listFraisRemovedReglement = data.listFrais;
+                                    console.log(listFraisRemovedReglement);
+                                    console.log(listeFrais);
+                                    for( var i = 0; i < listFraisRemovedReglement.length; i++){
+                                        var fraisReglement = listFraisRemovedReglement[i];
+                                        for( var j = 0; j < listeFrais.length; j++){
+                                            var fraisReservation = listeFrais[j];
+                                            console.log(fraisReglement.type_frais + ' ' +  fraisReservation.type_frais + ' ' +  fraisReglement.reservation_id + ' ' + fraisReservation.reservation_id)
+                                            if(fraisReglement.type_frais == fraisReservation.type_frais && fraisReglement.reservation_id == fraisReservation.reservation_id ){
+                                                fraisReservation.regle = false;
+                                                //alert('set false')
+                                            }
+                                        }    
+                                    }
+
+                                    form.updateData('list_frais', listeFrais); // not working alone
+                                    gridViewListFrais.option('dataSource', listeFrais);
+
+                                    // update liste frais pour reglement
+                                    updateListeFraisReglement(listeFrais);
                                 }
                             }).dxDataGrid('instance');
                             gridDiv.appendTo(itemElement);
@@ -330,18 +379,17 @@ function loadLastReservationOfResident(residentId){
                     //console.log('listFrais');
                     //console.log(result);
                     //console.log(result);
-                    formData.list_frais = result;
-                    // set liste frais pour reglement
-                    listeFraisReglement = [];
-                    for(var i=0; i < formData.list_frais.length ; i++){
-                        var frais = formData.list_frais[i];
-                        if(!frais.regle)
-                            listeFraisReglement.push(frais);
-                    }
+                    
+                    
                     // get a snapshot of 'listeFrais_snapshot''
                     //listeFrais_snapshot = Utils.deepCopy(formData.list_frais);
 
-                    gridViewListFrais.option('dataSource', result);
+                    listeFrais = result;
+                    formData.list_frais = listeFrais;
+                    gridViewListFrais.option('dataSource', listeFrais);
+
+                    // set liste frais pour reglement
+                    updateListeFraisReglement(listeFrais);
 
                     // load reglements
                     loadReglements(lastReservationOfResident.id)
@@ -402,11 +450,11 @@ function resetForm(type){
     form.itemOption('reglement', 'visible', false);
     
     if(gridViewListFrais){
-        gridViewListFrais.option('dataSource', listeFrais_model);
-        formData.list_frais = listeFrais_model;
-        //console.log(listeFrais_model);
+        listeFrais = Utils.deepCopy(listeFrais_model);
+        gridViewListFrais.option('dataSource', listeFrais);
+        formData.list_frais = listeFrais;
     } 
-    //alert('resetForm');
+    //form.updateData(formData);
 }
 
 button_save = $("#" + sectionId + " .button-save").dxButton({
@@ -482,6 +530,7 @@ var popupReglement = null,
             var gridDiv = $('<div>');
             gridViewListFraisReglement = gridDiv.dxDataGrid({
                 dataSource: listeFraisReglement,
+                noDataText : '',
                 sorting : {mode : 'none'}, 
                 editing: {
                     allowAdding : false,
@@ -505,22 +554,27 @@ var popupReglement = null,
                     var dateReglement = dateBoxReglement.option('value');
                     var reglement = {reservation_id : lastReservationOfResident.id, num_quittance : 0, date : dateReglement};
                     $.post(apiURL, reglement).done(function (reglement_id){
-                        //alert('reglement_id : '  + reglement_id);
                         for(var i = 0; i < listeFraisReglement.length; i++){
                             var frais = listeFraisReglement[i];
                             if(frais.regle == true){
                                 frais.reglement_id = reglement_id;
                                 frais.reservation_id = lastReservationOfResident.id;
-                                Store_Reglement_Details.insert(frais);
+                                Store_Reglement_Details.insert(frais).then(function( frais){
+                                    var frais = frais; // make the variable local so that it's not alternated'
+                                    findFraisInListe(listeFrais, frais.type_frais).regle = true;
+                                    form.updateData('list_frais', listeFrais); // not working alone
+                                    gridViewListFrais.option('dataSource', listeFrais);
+                                    // update liste frais pour reglement
+                                    updateListeFraisReglement(listeFrais);
+                                });
                             }
                         }
-                        form.itemOption('list_frais', 'visible', true); 
+                        // load reglements
+                        loadReglements(lastReservationOfResident.id)
+                        // delete popup
+                        popupReglement.hide();
+                        popupReglement && $(".popup-reglement").remove();
                     });
-                     // load reglements
-                    loadReglements(lastReservationOfResident.id)
-                    // delete popup
-                    popupReglement && $(".popup-reglement").remove();
-                    //alert('save reglement');
                 }
             }).dxButton('instance');
             dateDiv.appendTo(itemElement);
@@ -597,30 +651,7 @@ var popupCloture = null,
             var confirmButton = confirmButtonDiv.dxButton({
                 text: 'Enregistrer',
                 onClick: function() {
-                    /*
-                    // to avoid using $.post in here directly use the promise like for Sotre.load().done ...
-                    var apiURL = Config.API_BASE_URL + 'reglement';
-                    // insert reservation
-                    var dateReglement = dateBoxReglement.option('value');
-                    var reglement = {reservation_id : lastReservationOfResident.id, num_quittance : 0, date : dateReglement};
-                    $.post(apiURL, reglement).done(function (reglement_id){
-                        //alert('reglement_id : '  + reglement_id);
-                        for(var i = 0; i < listeFraisReglement.length; i++){
-                            var frais = listeFraisReglement[i];
-                            if(frais.regle == true){
-                                frais.reglement_id = reglement_id;
-                                frais.reservation_id = lastReservationOfResident.id;
-                                Store_Reglement_Details.insert(frais);
-                            }
-                        }
-                        form.itemOption('list_frais', 'visible', true); 
-                    });
-                     // load reglements
-                    loadReglements(lastReservationOfResident.id)
-                    // delete popup
-                    popupReglement && $(".popup-reglement").remove();
-                    //alert('save reglement');
-                    */
+                    alert('do something !')
                 }
             }).dxButton('instance');
             checkboxDiv.appendTo(itemElement);
@@ -659,9 +690,6 @@ button_imprimer_recu_inscription = $("#" + sectionId + " .button-imprimer-recu-i
         print_recu_inscription();
     }
 }).dxButton('instance');
-
-
-
 
 function print_recu_inscription(){
     var content = '';

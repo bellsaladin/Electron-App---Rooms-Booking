@@ -1,19 +1,17 @@
 //let Store_Chambre = require('../../stores/chambre')
-let Store_Pavillon = require('../../stores/pavillon')
-//let Store_Etage = require('../../stores/etage')
-//let Store_Categorie = require('../../stores/categorie')
-//let Store_Type = require('../../stores/type')
+//let Store_Pavillon = require('../../stores/pavillon')
+let Store_ModeleFrais = require('../../stores/modelefrais')
+let Store_Type = require('../../stores/type')
 
-var dataGrid = $("#ui-pavillon-list-section .gridContainer").dxDataGrid({
-    dataSource: Store_Pavillon,
-    masterDetail : {enabled : true},
+var dataGrid = $("#ui-modelefrais-list-section .gridContainer").dxDataGrid({
+    dataSource: Store_ModeleFrais,
+    masterDetail : {enabled : false},
     rowAlternationEnabled : true,
     showRowLines : true,
     showColumnLines : false,
     selection: {
         mode: "multiple"
     },
-    noDataText : '',
     remoteOperations : {
         filtering : false,
         grouping : false,
@@ -50,12 +48,18 @@ var dataGrid = $("#ui-pavillon-list-section .gridContainer").dxDataGrid({
     headerFilter: {
         visible: true
     },
-    columns: [{
-        dataField: "id",
-    }, {
-        dataField: "code"
-    },
+    noDataText : '',
+    paging : {enabled : false},
+    columns: [
+    { dataField: "id", visible : false}, 
+    { dataField: "type_frais"},
+    { dataField: "montant", dataType :'money', },
+    { dataField: "list_order" , dataType :'number', sortOrder : 'asc', caption :'Ordre d\'affichage' },
     {
-        dataField: "nom"
+        dataField: 'typechambre_id',
+        editorType: 'dxSelectBox',
+        caption : 'Type chambre',
+        lookup: { dataSource: Store_Type, valueExpr: 'id', displayExpr: 'nom' },
+        groupIndex: 0,
     }]
 }).dxDataGrid('instance');

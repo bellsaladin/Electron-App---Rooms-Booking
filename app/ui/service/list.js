@@ -1,12 +1,12 @@
 //let Store_Chambre = require('../../stores/chambre')
-let Store_Pavillon = require('../../stores/pavillon')
-//let Store_Etage = require('../../stores/etage')
+//let Store_Pavillon = require('../../stores/pavillon')
+let Store_Service = require('../../stores/service')
 //let Store_Categorie = require('../../stores/categorie')
 //let Store_Type = require('../../stores/type')
 
-var dataGrid = $("#ui-pavillon-list-section .gridContainer").dxDataGrid({
-    dataSource: Store_Pavillon,
-    masterDetail : {enabled : true},
+var dataGrid = $("#ui-service-list-section .gridContainer").dxDataGrid({
+    dataSource: Store_Service,
+    masterDetail : {enabled : false},
     rowAlternationEnabled : true,
     showRowLines : true,
     showColumnLines : false,
@@ -53,9 +53,6 @@ var dataGrid = $("#ui-pavillon-list-section .gridContainer").dxDataGrid({
     columns: [{
         dataField: "id",
     }, {
-        dataField: "code"
-    },
-    {
         dataField: "nom"
     }]
 }).dxDataGrid('instance');

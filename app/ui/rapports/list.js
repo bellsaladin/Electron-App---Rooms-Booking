@@ -10,15 +10,22 @@ $("#" + sectionId + " .button-rapport-1").dxButton({
     }
 });
 
+$("#" + sectionId + " .button-rapport-2").dxButton({
+    text: 'Imprimer',
+    onClick: function() {
+        print_rapport_2();
+    }
+});
+
 
 function print_rapport_1(){
-    $.get(Config.API_REPORTS_URL + 'rapport_situation_globale.php'/*, {  
-            filter: filterOptions,
-            sort: sortOptions,
-            requireTotalCount: requireTotalCount,
-            skip: skip,
-            take: take
-    }*/).done(function (html) {
+    $.get(Config.API_REPORTS_URL + 'rapport_situation_globale.php').done(function (html) {
+        Utils.printPdf(html);
+    }); 
+}
+
+function print_rapport_2(){
+    $.get(Config.API_REPORTS_URL + 'rapport_journal_encaissement.php').done(function (html) {
         Utils.printPdf(html);
     }); 
 }

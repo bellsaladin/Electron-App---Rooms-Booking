@@ -37,6 +37,7 @@ var dataGrid = $("#ui-type-list-section .gridContainer").dxDataGrid({
     onSelectionChanged: function(data) {
         //deleteButton.option("disabled", !data.selectedRowsData.length)
     }, 
+    noDataText : '',
     filterRow: {
         visible: true,
         applyFilter: "auto"

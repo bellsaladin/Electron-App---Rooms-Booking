@@ -1,21 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="utf-8">
   <link rel="stylesheet" href="assets/css/global.css">
-  <link rel="stylesheet" href="assets/css/about.css">
+  <link rel="stylesheet" href="assets/css/login-form.css">
+  <!--[if lt IE 9]>
+  <script type="text/javascript" src="assets/devXtreme/js/jquery-1.12.3.min.js"></script>
+  <![endif]-->
+  <!--[if gte IE 9]><!-->
+  <script type="text/javascript" src="assets/devXtreme/js/jquery-2.2.3.min.js"></script>
+  <!--<![endif]-->
+  <script>
+    try {
+        $ = jQuery = module.exports;
+        // If you want module.exports to be empty, uncomment:
+        // module.exports = {};
+    } catch(e) {}
+  </script>
+
 </head>
 <body>
-    <div id="about-modal" class="about">
-        <div class="about-wrapper">
-            
-                <img class="about-logo" src="assets/img/about.png" srcset="assets/img/about.png 1x, assets/img/about@2x.png 2x" alt="Residence Universitaire">
-                <br/>
-                <!--<small>Chargement en cours ...</small>-->
-        </div>
+    <div class="container">
+        <section id="content">
+            <form action="">
+                <h1>Login Form</h1>
+                <div>
+                    <input type="text" placeholder="Username" required="" id="username" />
+                </div>
+                <div>
+                    <input type="password" placeholder="Password" required="" id="password" />
+                </div>
+                <div>
+                    <input id="login_button" type="submit" value="Se connecter" />
+                </div>
+            </form>
+            <script>
+                //var Store_User = require('./app/stores/utilisateur')
+                const ipcRenderer = require("electron").ipcRenderer;
+                // send Command To PdfWorkerWindow
+                $('#login_button').click(function (){
+                    alert('connexion faite');
+                    var user = {'username' : 'Salah-Eddine'};
+                    ipcRenderer.send("loginSuccessful", user);
+                });
+                
+            </script>
+        </section>
     </div>
-    <script>
-        setTimeout(function(){ document.querySelector('#about-modal').classList.add('is-shown') }, 1000);
-    </script>
 </body>
 </html>

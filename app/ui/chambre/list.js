@@ -20,6 +20,7 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
         sorting : false,
         summary : false,
     },
+    paging : {enabled : false},
     loadPanel : {
         enabled : true,
         height : 90,
@@ -28,6 +29,7 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
         showIndicator : true,
         text : 'Chargement ...'
     },
+    noDataText : '',
     editing: {
         allowAdding : true,
         allowDeleting : true,
