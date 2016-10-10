@@ -3,6 +3,7 @@
 //let Store_Etage = require('../../stores/etage')
 //let Store_Categorie = require('../../stores/categorie')
 let Store_Type = require('../../stores/type')
+let Config = require('../../config')
 
 var dataGrid = $("#ui-type-list-section .gridContainer").dxDataGrid({
     dataSource: Store_Type,
@@ -33,6 +34,7 @@ var dataGrid = $("#ui-type-list-section .gridContainer").dxDataGrid({
         allowDeleting : true,
         allowUpdating : true,
         mode : 'row',
+        texts : Config.gridview.editing.texts
     },
     onSelectionChanged: function(data) {
         //deleteButton.option("disabled", !data.selectedRowsData.length)

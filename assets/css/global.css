@@ -178,7 +178,11 @@ kbd {
     bottom: 0px;
     left: 0px;
     width: 310px;
-    background: #525252;
+    background: #007dc5;
     color: #fff;
     padding: 10px;
+}
+#connected-user .btn-logout{
+  color:#fff;
+  font-size:12px;
 }

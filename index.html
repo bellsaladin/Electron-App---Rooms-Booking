@@ -203,7 +203,8 @@
     </div>
 
     <div id="connected-user">
-        Session : <b class="username"></b>
+        Session : <b class="username">admin</b>
+        <a href="javascript:void(0)" class="btn-logout">( Se déconnecter )</a>
     </div>
 
     <!--<div class="nav-item u-category-native-ui">
@@ -269,7 +270,11 @@
   <script>
     const ipcRenderer = require("electron").ipcRenderer;
     ipcRenderer.on("set-data", (event, user) => {
-      $('#connected-user .username').html( user.nom_utilisateur)
+        $('#connected-user .username').html( user.nom_utilisateur)
+    });
+
+    $('#connected-user .btn-logout').click(function(event){
+        ipcRenderer.send("logout");
     });
   </script>
 </body>

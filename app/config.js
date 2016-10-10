@@ -5,9 +5,13 @@ config.API_BASE_URL = 'http://localhost/_RestAPIs/ResidenceUniversitaire/api.php
 config.gridview = {
     editing : {
         texts : {
+            editRow : 'Modifier',
             deleteRow : 'Supprimer',
             addRow : 'Ajouter',
-            confirmDeleteMessage : 'Etes-vous sûr de vouloir supprimer cet enregistrement',
+            saveRowChanges : 'Enregistrer',
+            CancelRowChanges : 'Annuler',
+            confirmEditMessage : 'Etes-vous sûr de vouloir supprimer cet enregistrement',
+            confirmDeleteMessage : 'Etes-vous sûr de vouloir modifier cet enregistrement',
             confirmDeleteTitle : 'Confirmation',
         }
     }

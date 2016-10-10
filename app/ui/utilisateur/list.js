@@ -2,6 +2,7 @@
 //let Store_Pavillon = require('../../stores/pavillon')
 let Store_Service = require('../../stores/service')
 let Store_Utilisateur = require('../../stores/utilisateur')
+let Config = require('../../config')
 //let Store_Categorie = require('../../stores/categorie')
 //let Store_Type = require('../../stores/type')
 
@@ -35,6 +36,7 @@ var dataGrid = $("#ui-utilisateur-list-section .gridContainer").dxDataGrid({
         allowDeleting : true,
         allowUpdating : true,
         mode : 'row',
+        texts : Config.gridview.editing.texts
     },
     onSelectionChanged: function(data) {
         //deleteButton.option("disabled", !data.selectedRowsData.length)
@@ -63,5 +65,5 @@ var dataGrid = $("#ui-utilisateur-list-section .gridContainer").dxDataGrid({
         caption : 'Service',
         lookup: { dataSource: Store_Service, valueExpr: 'id', displayExpr: 'nom' }
     },
-    {dataField: 'active', dataType : 'boolean', caption : 'Activé'}]
+    {dataField: 'active', dataType : 'boolean', caption : 'Activé', }]
 }).dxDataGrid('instance');

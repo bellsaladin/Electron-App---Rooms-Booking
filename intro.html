@@ -35,47 +35,79 @@
 
 </head>
 <body>
-    <div class="container">
-        <section id="content">
-            <form action="">
-                <div>
-                    <input type="text" placeholder="Nom d'utilisateur" required="" id="username" />
-                </div>
-                <div>
-                    <input type="password" placeholder="Mot de passe" required="" id="password" />
-                </div>
-                <div>
-                    <input id="login_button" type="submit" value="Se connecter" />
-                </div>
+              <form class="login">
+                <p class="title">Authentification</p>
+                <input type="text" placeholder="Nom d'utilisateur" required="" id="username" autofocus/>
+                <i class="fa fa-user"></i>
+                <input type="password" placeholder="Mot de passe" required="" id="password" />
+                <i class="fa fa-key"></i>
+                <button>
+                    <i class="spinner"></i>
+                    <span class="state">Se connecter</span>
+                </button>
             </form>
             <script>
                 var Store_User = require('./app/stores/utilisateur')
                 const ipcRenderer = require("electron").ipcRenderer;
-                // send Command To PdfWorkerWindow
-                $('#login_button').click(function (event){
-                    event.preventDefault();
 
-                    var nom_utilisateur = $('#username').val();
-                    var mot_de_passe = $('#password').val();
-                    Store_User.load({filter : 'nom_utilisateur,eq,' + nom_utilisateur}).then(function (data){
-                        if(data.length > 0){
-                            user = data[0];
-                            if(mot_de_passe == user.mot_de_passe){
-                                if(user.active == "0"){
-                                    alert('Ce compte a été désactivé ! Veuillez conctacter le responsable.' );
-                                }else{
-                                    ipcRenderer.send("loginSuccessful", user);
+                var working = false;
+                $('.login').on('submit', function(e) {
+
+                    event.preventDefault();
+                
+                    if (working) return;
+                    working = true;
+                    var $this = $(this),
+                    $state = $this.find('button > .state');
+
+                    $this.addClass('loading');
+                    $state.html('Connexion en cours');
+
+                    setTimeout(function() {
+
+                        var nom_utilisateur = $('#username').val();
+                        var mot_de_passe = $('#password').val();
+                        Store_User.load({filter : 'nom_utilisateur,eq,' + nom_utilisateur}).then(function (data){
+                            if(data.length > 0){
+                                user = data[0];
+                                if(mot_de_passe == user.mot_de_passe){
+                                    if(user.active == "0"){
+                                        $this.addClass('error');
+                                        $state.html('Ce compte a été désactivé ! Veuillez conctacter le responsable.');
+                                        //alert('Ce compte a été désactivé ! Veuillez conctacter le responsable.' );
+                                    }else{
+                                        $this.addClass('ok');
+                                        $state.html('Connexion réussie !');
+                                        setTimeout(function() {
+                                            ipcRenderer.send("loginSuccessful", user);
+                                            working = false;
+                                            $('#username').val('');
+                                            $('#password').val('');
+                                            // set the status back to login
+                                            setTimeout(function() {
+                                                $this.removeClass('ok error loading');
+                                                $state.html('Se connecter');
+                                            }, 2000);
+
+                                        }, 2000);
+                                    }
+                                    return;// connexion faite    
                                 }
-                                return;// connexion faite    
                             }
-                        }
-                        alert('Nom d\'utilisateur ou mot de passe invalides' );
-                    });
+                            $this.addClass('error');
+                            $state.html('Nom d\'utilisateur ou mot de passe invalides' );
+                            setTimeout(function() {
+                                $this.removeClass('ok error loading');
+                                $state.html('Se connecter');
+                                working = false;
+                            }, 2000);
+                        });
+                    }, 2000);
+                    
                     
                 });
                 
             </script>
-        </section>
-    </div>
+     
 </body>
 </html>

@@ -1,4 +1,5 @@
 let Config = require('../config')
+let Utils = require('../utils')
 
 var entityName = 'utilisateur';
 var apiBaseURL = Config.API_BASE_URL + entityName;
@@ -24,9 +25,13 @@ var Store = new DevExpress.data.CustomStore({
             take: take
         }).done(function (result) {
             var rowsCount = 0;
+            
             if(result[entityName]) {
                 rowsCount = result[entityName].length;
             }
+
+            result[entityName] = Utils.preprocessData(result[entityName], {operation : 'convert', direction : 'receiving', colIndex : 'active'});
+
             if (loadOptions.requireTotalCount === true)
                 deferred.resolve(result[entityName], { totalCount: rowsCount });
             else
@@ -39,6 +44,9 @@ var Store = new DevExpress.data.CustomStore({
         return $.getJSON(apiBaseURL + "/" + encodeURIComponent(key));
     },
     update: function (key, values) {
+        // important transform before insert
+        values.active = (values.active == true)? 1: 0;
+        
         ////Updating data
         //alert(' encodeURIComponent(key)'  +  encodeURIComponent(key));
         // console.log(key);
@@ -50,6 +58,9 @@ var Store = new DevExpress.data.CustomStore({
         });
     },
     insert: function (values, doneCallback) {
+        // important transform before insert
+        values.active = (values.active == true)? 1: 0;
+
         //Inserting data
         // console.log(values.toString());
         //alert(doneCallback);

@@ -13,6 +13,16 @@ if (process.mas) app.setName('Electron APIs')
 
 var introWindow = null
 var mainWindow = null
+var pdfWorkerWindow = null
+
+var windowOptions = {
+      width: 1080,
+      minWidth: 680,
+      height: 840,
+      title: app.getName(),
+      show : false
+    }
+var createMainWindow = null;
 
 function initialize () {
   var shouldQuit = makeSingleInstance()
@@ -21,13 +31,7 @@ function initialize () {
   loadDemos()
 
   function createWindow () {
-    var windowOptions = {
-      width: 1080,
-      minWidth: 680,
-      height: 840,
-      title: app.getName(),
-      show : false
-    }
+    
 
     if (process.platform === 'linux') {
       windowOptions.icon = path.join(__dirname, '/assets/app-icon/png/512.png')
@@ -43,23 +47,32 @@ function initialize () {
     introWindow.once('ready-to-show', () => {
           introWindow.show();
     })
+    createMainWindow = function(){
+      mainWindow = new BrowserWindow(windowOptions)
+      // load the mainWindow
+      mainWindow.loadURL(path.join('file://', __dirname, '/index.html'))
+      mainWindow.maximize()
+      // Launch fullscreen with DevTools open, usage: npm run debug
+      if (debug) {
+        mainWindow.webContents.openDevTools()
+        require('devtron').install()
+      }
 
-    mainWindow = new BrowserWindow(windowOptions)
-    // load the mainWindow
-    mainWindow.loadURL(path.join('file://', __dirname, '/index.html'))
-    mainWindow.maximize()
-    // Launch fullscreen with DevTools open, usage: npm run debug
-    if (debug) {
-      mainWindow.webContents.openDevTools()
-      require('devtron').install()
+      mainWindow.once('ready-to-show', () => {
+          //introWindow.hide();
+          //introWindow.destroy();
+          //mainWindow.show();
+      })
+
+
+
+      mainWindow.on('closed', function () {
+        mainWindow = null
+      })
     }
 
-    mainWindow.once('ready-to-show', () => {
-        //introWindow.hide();
-        //introWindow.destroy();
-        //mainWindow.show();
-    })
-
+    createMainWindow();
+    
     // pdf worker window
 
     pdfWorkerWindow = new BrowserWindow();
@@ -69,10 +82,6 @@ function initialize () {
     pdfWorkerWindow.on("closed", () => {
         pdfWorkerWindow = undefined;
     });
-
-    mainWindow.on('closed', function () {
-      mainWindow = null
-    })
   }
 
   app.on('ready', function () {
@@ -90,8 +99,11 @@ function initialize () {
     if (mainWindow === null) {
       createWindow()
     }
-  })
+  });
+
+  
 }
+
 
 // retransmit it to workerWindow
 ipcMain.on("printPDF", function (event, content) {
@@ -102,14 +114,20 @@ ipcMain.on("printPDF", function (event, content) {
 // retransmit it to 
 ipcMain.on("loginSuccessful", function (event, user) {
     console.log(user);
-    //mainWindow.once('ready-to-show', () => {
-      introWindow.hide();
-      introWindow.destroy();
-      mainWindow.show();
-      mainWindow.webContents.send('set-data', user);
-
-    //})
+    if (mainWindow === null) {
+      createMainWindow();
+      console.log('Error : mainWindow null ');
+      return;
+    }
+    introWindow.hide();
+    mainWindow.show();
+    mainWindow.webContents.send('set-data', user);
     
+});
+
+ipcMain.on("logout", function (event) {
+    mainWindow.hide();
+    introWindow.show();
 });
 
 /*ipcMain.on('print-to-pdf', function (event) {
