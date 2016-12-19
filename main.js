@@ -9,7 +9,7 @@ const ipcMain = electron.ipcMain
 
 const debug = /--debug/.test(process.argv[2])
 
-if (process.mas) app.setName('Electron APIs')
+if (process.mas) app.setName('Residence Universitaire Al Massira')
 
 var introWindow = null
 var mainWindow = null
@@ -20,7 +20,8 @@ var windowOptions = {
       minWidth: 680,
       height: 840,
       title: app.getName(),
-      show : false
+      show : false, 
+      //thickFrame : false
     }
 var createMainWindow = null;
 
@@ -41,17 +42,26 @@ function initialize () {
     introWindow = new BrowserWindow({ width: 460,
                                       minWidth: 380,
                                       height: 320,
-                                      title: app.getName()})
+                                      title: app.getName(),
+                                      show : false,
+                                      //thickFrame :false,
+                                      })
     introWindow.loadURL(path.join('file://', __dirname, '/intro.html'))
     //introWindow.maximize()
     introWindow.once('ready-to-show', () => {
           introWindow.show();
     })
     createMainWindow = function(){
-      mainWindow = new BrowserWindow(windowOptions)
+      
       // load the mainWindow
+      mainWindow = new BrowserWindow(windowOptions)
+      mainWindow.hide();
       mainWindow.loadURL(path.join('file://', __dirname, '/index.html'))
-      mainWindow.maximize()
+      
+      /*windowOptions["node-integration"] = false; // if not required, for example loading external url
+      mainWindow = new BrowserWindow(windowOptions)
+      //mainWindow.loadURL('http://www.google.com'); // working well
+      mainWindow.loadURL('http://127.0.0.1:8081/');*/
       // Launch fullscreen with DevTools open, usage: npm run debug
       if (debug) {
         mainWindow.webContents.openDevTools()
@@ -64,10 +74,18 @@ function initialize () {
           //mainWindow.show();
       })
 
-
+      introWindow.on('closed', function () {
+        //mainWindow = null
+        //introWindow = null;
+        //pdfWorkerWindow = null;
+        app.quit()
+      })
 
       mainWindow.on('closed', function () {
-        mainWindow = null
+        //mainWindow = null
+        //introWindow = null;
+        //pdfWorkerWindow = null;
+        app.quit()
       })
     }
 
@@ -116,6 +134,7 @@ ipcMain.on("loginSuccessful", function (event, user) {
     console.log(user);
     if (mainWindow === null) {
       createMainWindow();
+      mainWindow.maximize()
       console.log('Error : mainWindow null ');
       return;
     }

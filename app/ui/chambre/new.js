@@ -5,6 +5,7 @@ let Store_Categorie = require('../../stores/categorie')
 let Store_Type = require('../../stores/type')
 let Utils = require('../../utils')
 
+var pavillonId = null;
 
 var sectionId = 'ui-chambre-new-section';
 //let shortcuts = document.querySelectorAll('kbd.normalize-to-platform')
@@ -31,7 +32,8 @@ var form = $("#" + sectionId + " .form").dxForm({
                     displayExpr: 'nom',
                     onValueChanged: function (e) {
                         //alert('Pavillon selectionné : ' + e.value);
-                        setNewNumChambre(e.value);
+                        pavillonId = e.value;
+                        setNewNumChambre(pavillonId);
                         return;
                     } 
                 }
@@ -98,8 +100,11 @@ $("#" + sectionId + " .button-save").dxButton({
         var formData = form.option('formData');
         //console.log(formData.toString());
         //return $.post(apiBaseURL, formData);
-        Store_Chambre.insert(formData);
-        Utils.showToastMsg('success', 'Chambre enregistrée');
+        Store_Chambre.insert(formData).then(function (data){
+            setNewNumChambre(pavillonId);
+            $("#ui-chambre-list-section .gridContainer").dxDataGrid('instance').refresh();
+            Utils.showToastMsg('success', 'Chambre enregistrée');
+        })        
     }
 });
 

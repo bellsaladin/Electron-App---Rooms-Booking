@@ -70,6 +70,7 @@
   <link rel="import" href="sections/ui/resident/list.html">
   <link rel="import" href="sections/ui/resident/list-oDataStore.html">
   <link rel="import" href="sections/ui/resident/new.html">
+  <link rel="import" href="sections/ui/resident/fiche.html">
   <link rel="import" href="sections/ui/resident/fiche-suivi.html">
   <link rel="import" href="sections/ui/resident/localisation.html">
   
@@ -156,10 +157,11 @@
         Gestion des residents
       </h5>
       <button type="button" id="button-resident-new" data-section="ui-resident-new" class="nav-button"><em>Nouveau </em> resident</button>
+      <button type="button" id="button-resident-fiche" data-section="ui-resident-fiche" class="nav-button"><em>Fiche </em> resident</button>
       <button type="button" id="button-resident-list" data-section="ui-resident-list" class="nav-button"><em>Liste </em> des residents</button>
       <!--<button type="button" id="button-resident-list-oDataStore" data-section="ui-resident-list-oDataStore" class="nav-button"><em>Liste (oDataStore)</em> des residents</button>-->
       <!-- <button type="button" id="button-resident-fiche-suivi" data-section="ui-resident-fiche-suivi" class="nav-button">Fiche de suivi</button> -->
-      <button type="button" id="button-resident-localisation" data-section="ui-resident-localisation" class="nav-button">Localisation</button>
+      <button type="button" id="button-resident-localisation" data-section="ui-resident-localisation" class="nav-button">Reservation</button>
     </div>
     <div class="nav-item u-category-native-ui">
       <h5 class="nav-category">
@@ -185,7 +187,7 @@
       <button type="button" id="button-categorie-list" data-section="ui-categorie-list" class="nav-button">Categories</button>
       <button type="button" id="button-type-list" data-section="ui-type-list" class="nav-button">Types de chambres</button>
       <button type="button" id="button-modelefrais-list" data-section="ui-modelefrais-list" class="nav-button">Frais de réservation</button>
-      <button type="button" id="button-parametres" data-section="ui-parametres" class="nav-button">Paramètres</button>
+      <!--<button type="button" id="button-parametres" data-section="ui-parametres" class="nav-button">Paramètres</button>-->
       <!--<button type="button" id="button-crash-hang" data-section="crash-hang" class="nav-button">Handling window <em>crashes and hangs</em></button>
       <button type="button" id="button-ex-links-file-manager" data-section="ex-links-file-manager" class="nav-button">Open <em>external links</em> or system <em>file manager</em></button>
       <button type="button" id="button-dialogs" data-section="dialogs" class="nav-button">Use system <em>dialogs</em></button>
@@ -225,8 +227,13 @@
       </a>
     </footer>-->
   </nav>
-
   <main class="content js-content">
+    <style>
+      .dx-toast-content {
+          min-width: 300px;
+          max-width: 400px;
+      }
+    </style>
     <div id="toast"></div>
   </main>
   
@@ -247,6 +254,7 @@
     require('./app/ui/resident/list')
     require('./app/ui/resident/list-oDataStore')
     require('./app/ui/resident/new')
+    require('./app/ui/resident/fiche')
     require('./app/ui/resident/localisation')
     require('./app/ui/resident/fiche-suivi')
 

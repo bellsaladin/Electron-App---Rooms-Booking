@@ -54,6 +54,8 @@ var formData = {
     resident_code : '',
     resident_infos : '',
     resident_id : null,
+    pavillon_id : null,
+    etage_id : null,
     chambre_id : 0,
     //date_inscription : null,
     //date_entree : null,
@@ -65,7 +67,7 @@ var formData = {
     reglement : reglementData
 }
 
-// logic functions 
+// logic functions
 
 
 function updateListeFraisReglement(list_frais){
@@ -76,7 +78,7 @@ function updateListeFraisReglement(list_frais){
             listeFraisReglement.push(Utils.shallowCopy(frais));
     }
 }
-// util function 
+// util function
 
 function findFraisInListe(list, val){
     //alert('findFraisInListe' + list);
@@ -111,11 +113,46 @@ var form = $("#" + sectionId + " .form").dxForm({
                         //alert('resident_code : ' + e.value);
                         loadResidentInfos(e.value);
                         return;
-                    } 
+                    }
                 }
             },
             {},
             {dataField: 'resident_infos', label :{text: ' ', showColon : false}, editorOptions: {disabled : true}},
+            {},
+            {
+                editorType: 'dxSelectBox',
+                dataField: 'pavillon_id',
+                label : {text : ''},
+                editorOptions : {
+                    dataSource : Store_Pavillon,
+                    valueExpr: 'id',
+                    displayExpr: 'nom',
+                    onValueChanged: function (e) {
+                        if(e.value == null) return;
+                        var pavillonId = e.value;
+                        setChambreLibreList(null, pavillonId, null)
+                        //return;
+                    }
+                }
+            },
+            {},
+            {
+                editorType: 'dxSelectBox',
+                dataField: 'etage_id',
+                label : {text : ''},
+                editorOptions : {
+                    dataSource : Store_Etage,
+                    valueExpr: 'id',
+                    displayExpr: 'nom',
+                    onValueChanged: function (e) {
+                        if(e.value == null) return;
+                        var pavillonId = form.option('formData').pavillon_id;
+                        var etageId = e.value;
+                        setChambreLibreList(null, pavillonId, etageId)
+                        //return;
+                    }
+                }
+            },
             {},
             {
                 editorType: 'dxSelectBox',
@@ -139,7 +176,7 @@ var form = $("#" + sectionId + " .form").dxForm({
 
                             }
                             listeFrais = listFraisChambre;
-                            alert(listFraisChambre.length)
+                            //alert(listFraisChambre.length)
                             for(var i = 0; i < listeFrais.length; i++){
                                 //alert(listeFrais[i].montant);
                             }
@@ -147,7 +184,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                             formData.list_frais = listeFrais;
                         });
                         //return;
-                    } 
+                    }
                 }
             },
             {},
@@ -183,7 +220,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                             //$('<div>').html(value).appendTo(itemElement);
                             var gridDiv = $('<div>');
                             gridViewListFrais = gridDiv.dxDataGrid({
-                                dataSource: value, 
+                                dataSource: value,
                                 noDataText : '',
                                 sorting : {mode : 'none'},
                                 editing: {
@@ -194,12 +231,12 @@ var form = $("#" + sectionId + " .form").dxForm({
                                     texts : Config.gridview.editing.texts
                                 },
                                 columns : [
-                                        {dataField: 'list_order', dataType : 'number', visible : false, sortOrder : 'asc'}, 
-                                        {dataField: 'type_frais'}, {dataField: 'montant'}, 
+                                        {dataField: 'list_order', dataType : 'number', visible : false, sortOrder : 'asc'},
+                                        {dataField: 'type_frais'}, {dataField: 'montant'},
                                         {dataField: 'regle', dataType : 'boolean', caption : 'Reglé',
                                         editorOptions : {
                                             onValueChanged: function (e) {
-                                            } 
+                                            }
                                         }}],
                                 onEditorPrepared: function (e) {
                                     //console.log(listeFrais_snapshot);
@@ -214,7 +251,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                             if(e.editorName == 'dxTextBox'){
                                                 var tb = e.editorElement.dxTextBox("instance").option("readOnly", "true");
                                             }
-                                        }   
+                                        }
                                     }
                                     if (e.dataField == "regle") {
                                         if(e.editorName == 'dxCheckBox'){
@@ -247,13 +284,13 @@ var form = $("#" + sectionId + " .form").dxForm({
                                 columns : [{dataField: 'id', dataType : 'number', visible : false, sortOrder : 'asc'}, {dataField: 'num_quittance', sortOrder : 'asc'}, {dataField: 'date'}],
                                 masterDetail: {
                                     enabled: true,
-                                    template: function(container, options) { 
+                                    template: function(container, options) {
                                         var element = $('<div>');
                                         element.css('width','1000px'); // making it full
                                         var listFrais = options.data.listFrais;
                                         for( var i = 0; i < listFrais.length; i++){
                                             var frais = listFrais[i];
-                                            element.append($('<span> &gt;  ' + frais.type_frais + ' : ' + frais.montant + ' DH </span><br/>'));    
+                                            element.append($('<span> &gt;  ' + frais.type_frais + ' : ' + frais.montant + ' DH </span><br/>'));
                                         }
                                         var link = $('<a href="javascript:void(0)">Imprimer</a>');
                                         element.append(link);
@@ -269,7 +306,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                     Store_Reglement.remove(data.id);
                                     // décocher le champ 'reglé' sur la liste des frais
                                     console.log(data);
-                                    
+
                                     var listFraisRemovedReglement = data.listFrais;
                                     console.log(listFraisRemovedReglement);
                                     console.log(listeFrais);
@@ -282,7 +319,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                                 fraisReservation.regle = false;
                                                 //alert('set false')
                                             }
-                                        }    
+                                        }
                                     }
 
                                     form.updateData('list_frais', listeFrais); // not working alone
@@ -305,25 +342,19 @@ function loadResidentInfos( resident_code){
     formData.resident_code = resident_code;
     resetForm();
     //alert('setResidentInfos');
-    Store_Resident.load()
+    Store_Resident.load({'filter': 'code,eq,' + resident_code})
     .done(function(result) {
-        for (var i = 0; i < result.length; i++) {
-            var resident = result[i];
-            //console.log (resident);
-            if(resident.code == null || resident.code.length == 0) continue;
-            //console.log(resident.code + ' ' + resident_code);
-            if(resident.code == resident_code){
-                //alert(chambre.num)
-                formData.resident_infos = resident.prenom + ' ' + resident.nom;
-                formData.resident_code = resident_code;
-                formData.resident_id = resident.id;
-                form.updateData(formData);
-                setChambreLibreList(null);
-                loadLastReservationOfResident(resident.id);
-                button_save.option('visible', true);
-                return;
-            }
-        }
+        var resident = result[0];
+        //console.log (resident);
+        //alert(chambre.num)
+        formData.resident_infos = resident.prenom + ' ' + resident.nom;
+        formData.resident_code = resident_code;
+        formData.resident_id = resident.id;
+        form.updateData(formData);
+        setChambreLibreList(null);
+        loadLastReservationOfResident(resident.id);
+        button_save.option('visible', true);
+        return;
         //alert(formData.resident_infos);
         // form.updateData(formData); // @@@ causes the list form to not show
     })
@@ -332,11 +363,23 @@ function loadResidentInfos( resident_code){
     });
 }
 
-// set 'chambres libres' list 
+// set 'chambres libres' list
 
 function setChambreLibreList(residentCurrentChambreId){
+    setChambreLibreList(residentCurrentChambreId, null, null)
+}
+
+function setChambreLibreList(residentCurrentChambreId, pavillon_id, etage_id){
+    var chambreLoadOptions = {};
+    if(pavillon_id != null){
+        chambreLoadOptions['getParams'] =  '&filter[]=pavillon_id,eq,' + pavillon_id;
+        chambreLoadOptions['getParams'] += '&statisfy=all';
+    }
+    if(etage_id != null){
+        chambreLoadOptions['getParams'] +=  '&filter[]=etage_id,eq,' + etage_id;
+    }
     chambreLibreList = []; // empty
-    Store_Chambre.load()
+    Store_Chambre.load(chambreLoadOptions)
     .done(function(chambres) {
         Store_Pavillon.load()
             .done(function(pavillons) {
@@ -353,13 +396,13 @@ function setChambreLibreList(residentCurrentChambreId){
                             }
                             if(!chambreReservee){
                                 if(chambre.num == null || chambre.num.length == 0) continue;
-                                var pavillonName = ''; 
+                                var pavillonName = '';
                                 for (var j = 0; j < pavillons.length; j++) {
                                     var pavillon = pavillons[j];
                                     if(chambre.pavillon_id == pavillon.id)
                                         pavillonName = pavillon.nom;
                                 }
-                                chambreLibreList.push({val : chambre.id, txt : chambre.num + ' ' + pavillonName, chambre : chambre})
+                                chambreLibreList.push({val : chambre.id, txt : chambre.num, chambre : chambre})
                             }
                         }
                         form.itemOption('chambre_id', {dataSource : chambreLibreList});
@@ -380,57 +423,53 @@ function setChambreLibreList(residentCurrentChambreId){
 
 setChambreLibreList(null);
 
-// chercher la dernière reservation pour cet étudiant 
+// chercher la dernière reservation pour cet étudiant
 
 function loadLastReservationOfResident(residentId){
-    Store_Reservation.load()
+    Store_Reservation.load({'filter': 'resident_id,eq,' + residentId})
     .done(function(reservations) {
-        //alert(reservations);
-        for (var i = 0; i < reservations.length; i++) {
-            var reservation = reservations[i];
-            if(reservation.resident_id == residentId){
-                //console.log('reservation');
-                //console.log(reservation);
-                lastReservationOfResident = reservation;
-                formData.chambre_id = lastReservationOfResident.chambre_id;
-                formData.date_inscription = Utils.fixDate(lastReservationOfResident.date_inscription);
-                formData.date_entree      = Utils.fixDate(lastReservationOfResident.date_entree);
-                formData.date_sortie      = Utils.fixDate(lastReservationOfResident.date_sortie);
-                button_remove.option('visible', true);
-                button_cloture.option('visible', true);
-                button_imprimer_recu_inscription.option('visible', true);
-                button_reglement.option('visible', true);
-                form.itemOption('list_frais', 'visible', true);
-                form.itemOption('reglement', 'visible', true);
-                gridViewListFrais.option('dataSource', null);
-                Store_Reservation_Details.load({'filter': 'reservation_id,eq,' + reservation.id}).done(function(result) {
-                    result = Utils.preprocessData(result, {operation : 'convert', direction : 'receiving', colIndex : 'regle'});
-                    //console.log('listFrais');
-                    //console.log(result);
-                    //console.log(result);
-                    
-                    
-                    // get a snapshot of 'listeFrais_snapshot''
-                    //listeFrais_snapshot = Utils.deepCopy(formData.list_frais);
+        var reservation = reservations[0];
+        lastReservationOfResident = reservation;
+        formData.chambre_id = lastReservationOfResident.chambre_id;
+        formData.pavillon_id = lastReservationOfResident.pavillon_id;
+        formData.etage_id = lastReservationOfResident.etage_id;
+        formData.date_inscription = Utils.fixDate(lastReservationOfResident.date_inscription);
+        formData.date_entree      = Utils.fixDate(lastReservationOfResident.date_entree);
+        formData.date_sortie      = Utils.fixDate(lastReservationOfResident.date_sortie);
+        button_remove.option('visible', true);
+        button_cloture.option('visible', true);
+        button_imprimer_recu_inscription.option('visible', true);
+        button_reglement.option('visible', true);
+        form.itemOption('list_frais', 'visible', true);
+        form.itemOption('reglement', 'visible', true);
+        gridViewListFrais.option('dataSource', null);
+        Store_Reservation_Details.load({'filter': 'reservation_id,eq,' + reservation.id}).done(function(result) {
+            result = Utils.preprocessData(result, {operation : 'convert', direction : 'receiving', colIndex : 'regle'});
+            //console.log('listFrais');
+            //console.log(result);
+            //console.log(result);
 
-                    listeFrais = result;
-                    formData.list_frais = listeFrais;
-                    gridViewListFrais.option('dataSource', listeFrais);
 
-                    // set liste frais pour reglement
-                    updateListeFraisReglement(listeFrais);
+            // get a snapshot of 'listeFrais_snapshot''
+            //listeFrais_snapshot = Utils.deepCopy(formData.list_frais);
 
-                    // load reglements
-                    loadReglements(lastReservationOfResident.id)
+            listeFrais = result;
+            formData.list_frais = listeFrais;
+            gridViewListFrais.option('dataSource', listeFrais);
 
-                    form.updateData(formData);
-                    // set chambre list vides
-                    setChambreLibreList(lastReservationOfResident.chambre_id);
-                });
+            // set liste frais pour reglement
+            updateListeFraisReglement(listeFrais);
 
-                return;
-            }
-        }
+            // load reglements
+            loadReglements(lastReservationOfResident.id)
+
+            form.updateData(formData);
+            // set chambre list vides
+            setChambreLibreList(lastReservationOfResident.chambre_id, lastReservationOfResident.pavillon_id, lastReservationOfResident.etage_id);
+        });
+
+        return;
+            
     })
     .fail(function(error) {
         // handle error
@@ -477,12 +516,12 @@ function resetForm(type){
     button_imprimer_recu_inscription.option('visible', false);
     form.itemOption('list_frais', 'visible', false);
     form.itemOption('reglement', 'visible', false);
-    
+
     if(gridViewListFrais){
         listeFrais = Utils.deepCopy(listeFrais_model);
         gridViewListFrais.option('dataSource', listeFrais);
         formData.list_frais = listeFrais;
-    } 
+    }
     //form.updateData(formData);
 }
 
@@ -499,7 +538,7 @@ button_save = $("#" + sectionId + " .button-save").dxButton({
         formData.date_inscription = Utils.toMysqlDateFormat(formData.date_inscription)
         formData.date_entree = Utils.toMysqlDateFormat(formData.date_entree)
         formData.date_sortie = Utils.toMysqlDateFormat(formData.date_sortie)
-        // important before calling save so that it checks for lastReservationOfResident in case save was 
+        // important before calling save so that it checks for lastReservationOfResident in case save was
         //loadLastReservationOfResident(formData.resident_id).done(function(reservation) {
             //lastReservationOfResident = reservation;
             if(lastReservationOfResident == null){
@@ -509,13 +548,13 @@ button_save = $("#" + sectionId + " .button-save").dxButton({
                 $.post(apiURL, formData).done(function (reservation_id){
                     for(var i = 0; i < listeFrais.length; i++){
                         var frais = listeFrais[i];
-                        alert('insert' + frais.montant);
+                        //alert('insert' + frais.montant);
                         frais.reservation_id = reservation_id;
                         Store_Reservation_Details.insert(frais);
                     }
-                    form.itemOption('list_frais', 'visible', true); 
+                    form.itemOption('list_frais', 'visible', true);
                     //lastReservationOfResident = { id : reservation_id };
-                    loadLastReservationOfResident(formData.resident_id); 
+                    loadLastReservationOfResident(formData.resident_id);
                     //alert('lastReservationOfResident.id ' + lastReservationOfResident.id)
                 });
             } else {
@@ -532,7 +571,7 @@ button_save = $("#" + sectionId + " .button-save").dxButton({
             }
         //});
         Utils.showToastMsg('success', 'Localisation enregistrée !');
-        
+
     }
 }).dxButton('instance');
 
@@ -557,21 +596,60 @@ var popupReglement = null,
             var dateBoxReglement = dateDiv.dxDateBox({
                 value: new Date()
             }).dxDateBox('instance');
+            var montantDiv = $('<div>');
+            var montantAVentiler = 0;
+            var montantBoxReglement = montantDiv.dxTextBox({
+                value: 0,
+                onValueChanged: function (e) {
+                  montantAVentiler = e.value;
+                }
+            }).dxTextBox('instance');
             var gridDiv = $('<div>');
             gridViewListFraisReglement = gridDiv.dxDataGrid({
                 dataSource: listeFraisReglement,
                 noDataText : '',
-                sorting : {mode : 'none'}, 
+                sorting : {mode : 'none'},
                 editing: {
                     allowAdding : false,
                     allowDeleting : true,
                     allowUpdating : true,
                     mode : 'cell',
                     texts : Config.gridview.editing.texts
+                },onRowUpdating: function (e) {
+                    alert('rowUpdated')
+                    console.log(e);
+                    var editedRowIndex = gridViewListFraisReglement.getRowIndexByKey(e.key)
+                    if(e.newData['regle'] == true){
+                      console.log(listeFraisReglement);
+                      //alert('editCell');
+                      //alert(gridViewListFraisReglement.cellValue(editedRowIndex, 'Reglé'));
+                      gridViewListFraisReglement.cellValue(editedRowIndex, 'montant', 500)
+                    }
+                    if(e.newData.montant == 0){
+                      e.cancel = true;
+                    }
+
+                    console.log(e);
+                    /*var rowIndex = e.row.rowIndex;
+                    var row = e.row;
+                    //alert(row.data.regle);
+                    if (e.dataField == "montant" || e.dataField == "type_frais" ) {
+                        if(formData.list_frais == null) return;
+                        if(formData.list_frais[rowIndex].regle == true){
+                            if(e.editorName == 'dxTextBox'){
+                                var tb = e.editorElement.dxTextBox("instance").option("readOnly", "true");
+                            }
+                        }
+                    }
+                    if (e.dataField == "regle") {
+                        if(e.editorName == 'dxCheckBox'){
+                            var tb = e.editorElement.dxCheckBox("instance").option("readOnly", "true");
+                        }
+                    }*/
                 },
                 columns : [
-                        {dataField: 'list_order', dataType : 'number', visible : false, sortOrder : 'asc'}, 
-                        {dataField: 'type_frais'}, {dataField: 'montant'}, 
+                        {dataField: 'list_order', dataType : 'number', visible : false, sortOrder : 'asc'},
+                        {dataField: 'type_frais'}, {dataField: 'montant'},
                         {dataField: 'regle', dataType : 'boolean', caption : 'Reglé'}],
             }).dxDataGrid('instance');
             var saveDiv = $('<div>');
@@ -610,8 +688,9 @@ var popupReglement = null,
                 }
             }).dxButton('instance');
             dateDiv.appendTo(itemElement);
+            montantDiv.appendTo(itemElement);
             gridDiv.appendTo(itemElement);
-            saveDiv.appendTo(itemElement);            
+            saveDiv.appendTo(itemElement);
         },
         showTitle: true,
         title: "Réglement",
@@ -651,7 +730,7 @@ var popupCloture = null,
                         montantInputBox.option('visible', false);
                     }
                     return;
-                } 
+                }
             }).dxCheckBox('instance');
             var montantRembourseDiv = $('<div>');
             var montantCaution = 0;
@@ -690,7 +769,7 @@ var popupCloture = null,
             itemElement.append('<br/>');
             montantRembourseDiv.appendTo(itemElement);
             itemElement.append('<br/>');
-            confirmButtonDiv.appendTo(itemElement);            
+            confirmButtonDiv.appendTo(itemElement);
         },
         showTitle: true,
         title: "Clotûrer",
@@ -725,7 +804,7 @@ button_imprimer_recu_inscription = $("#" + sectionId + " .button-imprimer-recu-i
 
 function print_recu_inscription(){
     var content = '';
-    content += '<div><center>Cité Univesitaire El Massira<br/>Kénitra</center></div><br/><br/>';
+    content += '<div><center>Résidence Univesitaire El Massira<br/>Kénitra</center></div><br/><br/>';
     content += '<p>Nom complet :  ' + formData.resident_infos +'</p>';
     content += '<p>Num chambre :  ' + findChambreInListe( chambreLibreList, formData.chambre_id).num +'</p>';
     var date = new Date();
@@ -743,7 +822,7 @@ function print_recu_reglement( reglement){
     var date = new Date();
     date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
     var content = '';
-    content += '<div><center>Cité Univesitaire El Massira<br/>Kénitra</center></div><br/><br/>';
+    content += '<div><center>Residence Univesitaire El Massira <br/>Kénitra</center></div><br/><br/>';
     content += '<p>Date :  ' + reglement.date +'</p><br><br>';
     content += '<p>Num quittance :  ' + num_quittance +'</p>';
     content += '<p>Nom complet :  ' + formData.resident_infos +'</p>';

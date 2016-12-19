@@ -57,6 +57,7 @@ function showToastMsg(type, msg) {
         type: type,
         displayTime: 3000
     });
+    $("#toast").dxToast("instance").show();
 }
 
 function deepCopy(obj) {
@@ -119,6 +120,7 @@ function printPdf(content) {
 function shallowCopy(object){
     return jQuery.extend({},object);
 }
+
 module.exports = {
     pad: pad,
     fixDate : fixDate,

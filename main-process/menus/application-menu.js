@@ -3,7 +3,7 @@ const BrowserWindow = electron.BrowserWindow
 const Menu = electron.Menu
 const app = electron.app
 
-let template = [{
+let template = [/*{
   label: 'Edit',
   submenu: [{
     label: 'Undo',
@@ -126,7 +126,7 @@ let template = [{
       electron.shell.openExternal('http://electron.atom.io')
     }
   }]
-}]
+}*/]
 
 function addUpdateMenuItems (items, position) {
   if (process.mas) return
@@ -214,12 +214,12 @@ if (process.platform === 'darwin') {
   })
 
   // Window menu.
-  template[3].submenu.push({
+  /*template[3].submenu.push({
     type: 'separator'
   }, {
     label: 'Bring All to Front',
     role: 'front'
-  })
+  })*/
 
   //addUpdateMenuItems(template[0].submenu, 1)
 }
@@ -231,7 +231,7 @@ if (process.platform === 'win32') {
 
 app.on('ready', function () {
   const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  //Menu.setApplicationMenu(menu)
 })
 
 app.on('browser-window-created', function () {

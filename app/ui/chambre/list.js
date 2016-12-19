@@ -7,12 +7,15 @@ let Config = require('../../config')
 
 var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
     dataSource: Store_Chambre,
-    masterDetail : {enabled : true},
+    masterDetail : {enabled : false},
     rowAlternationEnabled : true,
     showRowLines : true,
     showColumnLines : false,
     selection: {
         mode: "multiple"
+    },
+    grouping: {
+        autoExpandAll: false,
     },
     remoteOperations : {
         filtering : false,
@@ -32,7 +35,7 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
     },
     noDataText : '',
     editing: {
-        allowAdding : true,
+        allowAdding : false,
         allowDeleting : true,
         allowUpdating : true,
         mode : 'row',
@@ -40,7 +43,7 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
     },
     onSelectionChanged: function(data) {
         //deleteButton.option("disabled", !data.selectedRowsData.length)
-    }, 
+    },
     filterRow: {
         visible: true,
         applyFilter: "auto"
@@ -80,7 +83,7 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
         caption: "Type",
         lookup: { dataSource: Store_Type, valueExpr: 'id', displayExpr: 'nom' }
     }],
-    
+
     /*columns: [{
         dataField: "OrderNumber",
         width: 130,
@@ -101,7 +104,7 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
                           "or",
                         [getOrderDay, "=", 6]]
                     });
-                    
+
                     return results;
                 };
             }
@@ -115,19 +118,19 @@ var dataGrid = $("#ui-chambre-list-section .gridContainer").dxDataGrid({
                 text: "Less than $3000",
                 value: ["SaleAmount", "<", 3000]
             }, {
-                
+
                 text: "$3000 - $5000",
                 value: [["SaleAmount", ">=", 3000], ["SaleAmount", "<", 5000]]
             }, {
-                
+
                 text: "$5000 - $10000",
                 value: [["SaleAmount", ">=", 5000], ["SaleAmount", "<", 10000]]
             }, {
-                
+
                 text: "$10000 - $20000",
                 value: [["SaleAmount", ">=", 10000], ["SaleAmount", "<", 20000]]
             }, {
-                
+
                 text: "Greater than $20000",
                 value: ["SaleAmount", ">=", 20000]
             }]

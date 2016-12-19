@@ -4,7 +4,7 @@ let Utils = require('../../utils')
 
 var photoResident = null;
 
-var sectionId = 'ui-resident-new-section';
+var sectionId = 'ui-resident-fiche-section';
 //let shortcuts = document.querySelectorAll('kbd.normalize-to-platform')
 var formData = {
     //id: "1",
@@ -25,11 +25,35 @@ var formData = {
     photo : null,
 }
 
+var formDataEmpty = formData; // snapshot of empty form data might be used later
+
 var form = $("#" + sectionId + " .form").dxForm({
     formData: formData,
     enctype : 'multipart/form-data',
     items: [//{dataField: 'id'},
-            {dataField: 'code', editorOptions : { disabled : true} },
+            {dataField: 'code', 
+             editorOptions : { 
+                onValueChanged: function (e) {
+                    var formData = form.option('formData');
+                    Store_Resident.load({filter : 'code,eq,' + formData.code}).then( function (residents){
+                        if(residents && residents.length == 1){
+                            btn_save.option('visible', true);
+                            formData = residents[0];
+                            photoResident.attr('src', formData.photo)
+                            form.updateData(formData);
+                            //formData.photo = data;
+                            form.updateData('photo', formData.photo);
+                        }else{
+                            btn_save.option('visible', false);
+                            formDataEmpty.code = formData.code;
+                            form.updateData(formDataEmpty);
+                            form.repaint();
+                        }
+                    });
+                    return;
+                } 
+             }
+            },
             {},
             {itemType: "group",
              caption: "Informations personnelles",
@@ -42,11 +66,11 @@ var form = $("#" + sectionId + " .form").dxForm({
                         dataSource : [{val : 'M', txt : 'Masculin'}, {val : 'F', txt : 'Feminin'}],
                         valueExpr: 'val',
                         displayExpr: 'txt',
-                        onValueChanged: function (e) {
+                        /*onValueChanged: function (e) {
                             //alert('Pavillon selectionné : ' + e.value);
                             setCodeResident(e.value);
                             return;
-                        } 
+                        } */
                     }
                 },
                 {dataField: 'etranger', editorType : 'dxCheckBox',
@@ -163,22 +187,25 @@ var form = $("#" + sectionId + " .form").dxForm({
     colCount: 2
 }).dxForm('instance');
 
-$("#" + sectionId + " .button-save").dxButton({
-    text: 'Enregistrer',
+var btn_save =  $("#" + sectionId + " .button-save").dxButton({
+    text: 'Modifier',
+    visible : false,
     onClick: function() {
         var formData = form.option('formData');
 
         formData.etranger = (formData.etranger== true)?1:0; // important conversion
 
-        Store_Resident.insert(formData);
-        Utils.showToastMsg('success', 'Resident enregistré');
-        setCodeResident(formData.sexe); // generate new code
+        Store_Resident.update(formData.id, formData).then(function (data){
+            Utils.showToastMsg('success', 'Les données du resident ont été modifiées !');
+        });
+        
+        //setCodeResident(formData.sexe); // generate new code
         // temporary
         $("#ui-resident-list-section .gridContainer").dxDataGrid('instance').refresh();
     }
-});
+}).dxButton('instance');
 
-setCodeResident('M');
+//setCodeResident('M');
 
 function setCodeResident(sexe){
     Store_Resident.load()
@@ -256,9 +283,9 @@ var canvas = null;
 var button_capture = null;
 
 function initWebCam() {
-    video = document.getElementById('video_1');
-    canvas = document.getElementById('canvas_1');
-    button_capture = document.getElementById('button_capture_1');
+    video = document.getElementById('video_2');
+    canvas = document.getElementById('canvas_2');
+    button_capture = document.getElementById('button_capture_2');
 
     navigator.getMedia = ( navigator.getUserMedia ||
                             navigator.webkitGetUserMedia ||

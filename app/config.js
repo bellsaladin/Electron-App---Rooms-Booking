@@ -9,7 +9,7 @@ config.gridview = {
             deleteRow : 'Supprimer',
             addRow : 'Ajouter',
             saveRowChanges : 'Enregistrer',
-            CancelRowChanges : 'Annuler',
+            cancelRowChanges : 'Annuler',
             confirmEditMessage : 'Etes-vous sûr de vouloir supprimer cet enregistrement',
             confirmDeleteMessage : 'Etes-vous sûr de vouloir modifier cet enregistrement',
             confirmDeleteTitle : 'Confirmation',

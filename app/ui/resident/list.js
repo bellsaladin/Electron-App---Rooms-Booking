@@ -1,4 +1,5 @@
 let Store_Resident = require('../../stores/resident')
+let Config = require('../../config')
 //let normalize = require('electron-shortcut-normalizer')
 //let shortcuts = document.querySelectorAll('kbd.normalize-to-platform')
 
@@ -63,6 +64,7 @@ var dataGrid = $("#ui-resident-list-section .gridContainer").dxDataGrid({
         allowDeleting : true,
         allowUpdating : false,
         mode : 'row',
+        texts : Config.gridview.editing.texts
     },
     onSelectionChanged: function(data) {
         //deleteButton.option("disabled", !data.selectedRowsData.length)
