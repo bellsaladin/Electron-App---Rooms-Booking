@@ -124,7 +124,7 @@ var form = $("#" + sectionId + " .form").dxForm({
             {
                 editorType: 'dxSelectBox',
                 dataField: 'pavillon_id',
-                label : {text : ''},
+                label : {text : 'Pavillon'},
                 editorOptions : {
                     dataSource : Store_Pavillon,
                     valueExpr: 'id',
@@ -141,7 +141,7 @@ var form = $("#" + sectionId + " .form").dxForm({
             {
                 editorType: 'dxSelectBox',
                 dataField: 'etage_id',
-                label : {text : ''},
+                label : {text : 'Etage'},
                 editorOptions : {
                     dataSource : Store_Etage,
                     valueExpr: 'id',
@@ -225,7 +225,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                 editorOptions : {
                 }
             },
-            {dataField: 'list_frais', visible : false, colspan : 3},
+            {dataField: 'list_frais', label : {text : 'Liste des frais'}, visible : false, colspan : 3},
             {dataField: 'reglement', visible : false, colspan : 3}
            ],
             customizeItem: function (item) {
@@ -601,6 +601,9 @@ button_remove = $("#" + sectionId + " .button-remove").dxButton({
     }
 }).dxButton('instance');
 
+var pourcentageRemise = 0;
+var montantRemise = 0;
+var montantTotalRegle = 0;
 var popupReglement = null,
     popupReglement_options = {
         width: 600,
@@ -610,11 +613,15 @@ var popupReglement = null,
             var dateBoxReglement = dateDiv.dxDateBox({
                 value: new Date()
             }).dxDateBox('instance');
+            var remiseDivContainer = $('<div>');
             var remiseDiv = $('<div>');
+            
             var remiseBoxReglement = remiseDiv.dxTextBox({
                 value: 0,
                 onValueChanged: function (e) {
-                  
+                    pourcentageRemise = parseInt(e.value);
+                    montantRemise = montantTotalRegle * pourcentageRemise / 100
+                    $('#montant_remise').html(montantRemise);
                 }
             }).dxTextBox('instance');
             var montantDiv = $('<div>');
@@ -637,20 +644,24 @@ var popupReglement = null,
                     mode : 'cell',
                     texts : Config.gridview.editing.texts
                 },onRowUpdating: function (e) {
-                    /*alert('rowUpdated')
                     console.log(e);
                     var editedRowIndex = gridViewListFraisReglement.getRowIndexByKey(e.key)
+                    var montantLigne = parseInt(gridViewListFraisReglement.cellValue(editedRowIndex, 'montant'));
                     if(e.newData['regle'] == true){
                       console.log(listeFraisReglement);
-                      //alert('editCell');
-                      //alert(gridViewListFraisReglement.cellValue(editedRowIndex, 'Reglé'));
-                      gridViewListFraisReglement.cellValue(editedRowIndex, 'montant', 500)
+                      montantTotalRegle += montantLigne;
+                    }else if(e.newData['regle'] == false){
+                      montantTotalRegle -= montantLigne;
                     }
+                    // update montant remise
+                    montantRemise = montantTotalRegle * pourcentageRemise / 100
+                    $('#montant_remise').html(montantRemise);
+
                     if(e.newData.montant == 0){
                       e.cancel = true;
                     }
 
-                    console.log(e);*/
+                    /*console.log(e);*/
                     /*var rowIndex = e.row.rowIndex;
                     var row = e.row;
                     //alert(row.data.regle);
@@ -682,7 +693,7 @@ var popupReglement = null,
                     var apiURL = Config.API_BASE_URL + 'reglement';
                     // insert reservation
                     var dateReglement = dateBoxReglement.option('value');
-                    var reglement = {reservation_id : lastReservationOfResident.id, num_quittance : 0, date : dateReglement};
+                    var reglement = {reservation_id : lastReservationOfResident.id, num_quittance : 0, date : dateReglement, remise_prct : pourcentageRemise, remise_montant : montantRemise};
                     $.post(apiURL, reglement).done(function (reglement_id){
                         for(var i = 0; i < listeFraisReglement.length; i++){
                             var frais = listeFraisReglement[i];
@@ -696,6 +707,12 @@ var popupReglement = null,
                                     gridViewListFrais.option('dataSource', listeFrais);
                                     // update liste frais pour reglement
                                     updateListeFraisReglement(listeFrais);
+
+                                    // reset remise data 
+                                    pourcentageRemise = 0;
+                                    montantRemise = 0;
+                                    montantTotalRegle = 0;
+                                    $('#montant_remise').html('0');
                                 });
                             }
                         }
@@ -709,8 +726,11 @@ var popupReglement = null,
                 }
             }).dxButton('instance');
             dateDiv.appendTo(itemElement);
-            remiseDiv.appendTo(itemElement);
-            montantDiv.appendTo(itemElement);
+            remiseDivContainer.append('Remise (%) : ')
+            remiseDivContainer.append(remiseDiv);
+            remiseDivContainer.append('<div>Montant remise : <span id="montant_remise">0</span> DH</div>')
+            remiseDivContainer.appendTo(itemElement);
+            //montantDiv.appendTo(itemElement);
             gridDiv.appendTo(itemElement);
             saveDiv.appendTo(itemElement);
         },
@@ -881,8 +901,8 @@ function print_recu_reglement( reglement){
             content += '</tr>';
         }
         content += '</table>';
-        content += '<p>Remise :  0 DH</p>';
-        content += '<p>Total :  ' + total +' DH </p>';
+        content += '<p>Remise :  ' + reglement.remise_montant  + ' DH</p>';
+        content += '<p>Total :  ' + (total - reglement.remise_montant) +' DH </p>';
         content += '<p style="margin-left:250px;"><u>Signature</u></p><br><br>';
         // put border on the content
         content = '<div style="margin:50px; padding :10px; border:1px solid silver; font-size:11px;">' + content + '</div>';
