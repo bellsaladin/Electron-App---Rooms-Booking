@@ -827,10 +827,11 @@ button_imprimer_recu_inscription = $("#" + sectionId + " .button-imprimer-recu-i
 function print_recu_inscription(){    
     loadBase64Logos(function( logo_fr, logo_ar){
         var content = '';
-        content += '';
+        content += '<div style="font-size:11px">';
         content += '<img style="float:left" height="80" src="'+logo_fr+'"/>';
         content += '<img style="float:right" height="80" src="'+logo_ar+'"/>';
-        content += '<br/><br/><br/><br/><div></div>';
+        content += '<br/><br/><br/><br/><br/><br/><br/><br/><div></div>';
+        content += '<p>Code :  ' + formData.resident_code +'</p>';
         content += '<p>Nom complet :  ' + formData.resident_infos +'</p>';
         content += '<p>Num chambre :  ' + findChambreInListe( chambreLibreList, formData.chambre_id).num +'</p>';
         var date = new Date();
@@ -838,7 +839,7 @@ function print_recu_inscription(){
         content += '<p>Date :  ' + date +'</p><br><br>';
         content += '<p style="margin-left:250px;"><u>Signature</u></p><br><br>';
         // put border on the content
-        content = '<div style="margin:50px; padding :10px; border:1px solid silver">' + content + '</div>';
+        content = '<div style="margin:50px; padding :10px; border:1px solid silver; font-size:11px;">' + content + '</div>';
         Utils.printPdf(content);
     });          
 }
@@ -852,25 +853,39 @@ function print_recu_reglement( reglement){
         var content = '';
         content += '<img style="float:left" height="80" src="'+logo_fr+'"/>';
         content += '<img style="float:right" height="80" src="'+logo_ar+'"/>';
-        content += '<br/><br/><br/><br/><div></div>';
+        content += '<br/><br/><br/><br/><br/><br/><br/><br/>';
+        content += '<div style="float:right"><p>Date :  ' + reglement.date +'</p>';
+        content += '<p>Reçu n° :  ' + num_quittance +'</p></div>';
         content += '<p>Nom :  ' + formData.resident_nom +'</p>';
-        content += '<p style="float:right">Date :  ' + reglement.date +'</p><br><br>';
         content += '<p>Prénom :  ' + formData.resident_prenom +'</p>';
-        content += '<p style="float:right">Reçu n° :  ' + num_quittance +'</p>';
-        content += '<table style="margin-left:50px;">';
         for(var i = 0; i< listFrais.length; i++){
             var frais = listFrais[i];
+            if(frais.type_frais == 'Assurance')
+                content += '<p>Assurance :  ' + frais.montant +' DH</p>';
+            if(frais.type_frais == 'Frais de dossier')
+                content += '<p>Frais de dossier :  ' + frais.montant +' DH</p>';
+            if(frais.type_frais == 'Caution')
+                content += '<p>Caution :  ' + frais.montant +' DH</p>';
+        }
+        content += '<p>Mois payés : </p>';
+        content += '<table style="margin-left:50px; font-size:11px">';
+        var total = 0;
+        for(var i = 0; i< listFrais.length; i++){
+            var frais = listFrais[i];
+            total += parseInt(frais.montant);
+            if(frais.type_frais == 'Caution' || frais.type_frais == 'Assurance' || frais.type_frais == 'Frais de dossier' )
+                continue;
             content += '<tr>';
             content += '<td> - ' + frais.type_frais + '</td>';
             content += '<td>' + frais.montant + ' DH </td>';
             content += '</tr>';
         }
         content += '</table>';
-        content += '<p>Remise :  ' + formData.resident_prenom +'</p>';
-        content += '<p>Total :  ' + formData.resident_prenom +'</p>';
+        content += '<p>Remise :  0 DH</p>';
+        content += '<p>Total :  ' + total +' DH </p>';
         content += '<p style="margin-left:250px;"><u>Signature</u></p><br><br>';
         // put border on the content
-        content = '<div style="margin:50px; padding :10px; border:1px solid silver">' + content + '</div>';
+        content = '<div style="margin:50px; padding :10px; border:1px solid silver; font-size:11px;">' + content + '</div>';
         Utils.printPdf(content);
     });
 }
