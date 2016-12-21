@@ -167,16 +167,47 @@ $("#" + sectionId + " .button-save").dxButton({
     text: 'Enregistrer',
     onClick: function() {
         var formData = form.option('formData');
-
         formData.etranger = (formData.etranger== true)?1:0; // important conversion
-
         Store_Resident.insert(formData);
-        Utils.showToastMsg('success', 'Resident enregistré');
+        lastResidentData = Utils.shallowCopy(formData);
         setCodeResident(formData.sexe); // generate new code
+        Utils.showToastMsg('success', 'Resident enregistré');
         // temporary
         $("#ui-resident-list-section .gridContainer").dxDataGrid('instance').refresh();
     }
 });
+
+var lastResidentData = null;
+
+$("#" + sectionId + " .button-imprimer-recu").dxButton({
+    text: 'Imprimer reçu',
+    onClick: function() {
+
+        if(lastResidentData != null){
+            print_recu_inscription();
+        }
+    }
+});
+
+function print_recu_inscription(){    
+    var date = new Date();
+    date = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+    var content = '';
+    content += '<div style="font-size:11px">';
+    content += '<br/><br/>';
+    content += '<center><b>RECU D\'INSCRIPTION</b></center>';
+    content += '<br/><br/>';
+    content += '<p style="float:right">Date :  ' + date +'</p>';
+    content += '<p>Code :  ' + lastResidentData.code +'</p>';
+    content += '<p>CIN :  ' + lastResidentData.num_cin +'</p>';
+    content += '<p>Nom :  ' + lastResidentData.nom +'</p>';
+    content += '<p>Prénom :  ' + lastResidentData.prenom +'</p>';
+    content += '<p style="margin-left:250px;"><u>Signature</u></p><br><br>';
+    // put border on the content
+    content = '<div style="margin:50px; padding :10px; border:1px solid silver; font-size:11px;">' + content + '</div>';
+    Utils.printPdf(content);       
+}
+
 
 setCodeResident('M');
 

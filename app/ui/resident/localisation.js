@@ -177,6 +177,7 @@ var form = $("#" + sectionId + " .form").dxForm({
                                 for(var j = 0; j < listeFrais.length; j++){
                                     if(listFraisChambre[i].type_frais == listeFrais[j].type_frais){
                                         listFraisChambre[i].id = listeFrais[j].id; // set id so that the update works
+                                        listFraisChambre[i].reservation_id = listeFrais[j].reservation_id; // add this binding info (reservation_id) which doesn't exist at table 'ModeleFrais'
                                         if(listeFrais[j].regle){
                                             listFraisChambre[i].regle = listeFrais[j].regle;
                                             listFraisChambre[i].montant = listeFrais[j].montant;
@@ -334,18 +335,19 @@ var form = $("#" + sectionId + " .form").dxForm({
                                             console.log(fraisReglement.type_frais + ' ' +  fraisReservation.type_frais + ' ' +  fraisReglement.reservation_id + ' ' + fraisReservation.reservation_id)
                                             if(fraisReglement.type_frais == fraisReservation.type_frais && fraisReglement.reservation_id == fraisReservation.reservation_id ){
                                                 fraisReservation.regle = false;
-                                                //alert('set false')
+                                                console.log('set false')
                                             }
                                         }
                                     }
 
                                     form.updateData('list_frais', listeFrais); // not working alone
                                     gridViewListFrais.option('dataSource', listeFrais);
-
                                     // update liste frais pour reglement
                                     updateListeFraisReglement(listeFrais);
                                     // important fix
                                     form.repaint();
+                                    form.updateData(formData);
+                                    setChambreLibreList(formData.chambre_id, formData.pavillon_id, formData.etage_id);
                                 }
                             }).dxDataGrid('instance');
                             gridDiv.appendTo(itemElement);
@@ -470,6 +472,8 @@ function loadLastReservationOfResident(residentId){
             // get a snapshot of 'listeFrais_snapshot''
             //listeFrais_snapshot = Utils.deepCopy(formData.list_frais);
             listeFrais = result;
+            console.log('listeFrais');
+            console.log(listeFrais);
             formData.list_frais = listeFrais;
             gridViewListFrais.option('dataSource', listeFrais);
 
@@ -581,6 +585,7 @@ button_save = $("#" + sectionId + " .button-save").dxButton({
                     //alert(frais.id + ' ' + frais.montant);
                     Store_Reservation_Details.update(frais.id, frais );
                 }
+                loadLastReservationOfResident(formData.resident_id);
                 //alert('Store_Reservation.update(lastReservationOfResident.id, formData);');
             }
         //});
@@ -693,7 +698,7 @@ var popupReglement = null,
                     var apiURL = Config.API_BASE_URL + 'reglement';
                     // insert reservation
                     var dateReglement = dateBoxReglement.option('value');
-                    var reglement = {reservation_id : lastReservationOfResident.id, num_quittance : 0, date : dateReglement, remise_prct : pourcentageRemise, remise_montant : montantRemise};
+                    var reglement = {reservation_id : lastReservationOfResident.id, num_quittance : 0, chambre_id : formData.chambre_id, date : dateReglement, remise_prct : pourcentageRemise, remise_montant : montantRemise};
                     $.post(apiURL, reglement).done(function (reglement_id){
                         for(var i = 0; i < listeFraisReglement.length; i++){
                             var frais = listeFraisReglement[i];
