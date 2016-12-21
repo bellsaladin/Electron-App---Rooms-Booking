@@ -65,6 +65,7 @@ var formData = {
     date_inscription : '2016-01-01',
     date_entree : '2016-01-01',
     date_sortie : '2016-01-01',
+    avance : 0,
     list_frais : listeFrais,
     reglement : reglementData
 }
@@ -178,9 +179,9 @@ var form = $("#" + sectionId + " .form").dxForm({
                                     if(listFraisChambre[i].type_frais == listeFrais[j].type_frais){
                                         listFraisChambre[i].id = listeFrais[j].id; // set id so that the update works
                                         listFraisChambre[i].reservation_id = listeFrais[j].reservation_id; // add this binding info (reservation_id) which doesn't exist at table 'ModeleFrais'
+                                        listFraisChambre[i].montant = listeFrais[j].montant;
                                         if(listeFrais[j].regle){
                                             listFraisChambre[i].regle = listeFrais[j].regle;
-                                            listFraisChambre[i].montant = listeFrais[j].montant;
                                         }else{
                                             listFraisChambre[i].regle = false;
                                         }
@@ -306,10 +307,13 @@ var form = $("#" + sectionId + " .form").dxForm({
                                         var element = $('<div>');
                                         element.css('width','1000px'); // making it full
                                         var listFrais = options.data.listFrais;
+                                        listFrais.sort(function(a,b) {return (parseInt(a.list_order) > parseInt(b.list_order)) ? 1 : ((parseInt(b.list_order) > parseInt(a.list_order)) ? -1 : 0);} );
+                                        element.append('<table class="table-no-border" style="font-size:11px">');
                                         for( var i = 0; i < listFrais.length; i++){
                                             var frais = listFrais[i];
-                                            element.append($('<span> &gt;  ' + frais.type_frais + ' : ' + frais.montant + ' DH </span><br/>'));
+                                            element.append($('<tr class="table-no-border"> <td style="width:110px">&gt;  ' + frais.type_frais + ' :</td><td> ' + frais.montant + ' DH </td></tr>'));
                                         }
+                                        element.append('</table>');
                                         var link = $('<a href="javascript:void(0)">Imprimer</a>');
                                         element.append(link);
                                         link.click(function (e){
@@ -883,30 +887,45 @@ function print_recu_reglement( reglement){
         content += '<p>Reçu n° :  ' + num_quittance +'</p></div>';
         content += '<p>Nom :  ' + formData.resident_nom +'</p>';
         content += '<p>Prénom :  ' + formData.resident_prenom +'</p>';
+        content += '<table style="font-size:11px">';
         for(var i = 0; i< listFrais.length; i++){
             var frais = listFrais[i];
+            if(frais.type_frais == 'Avance')
+                content += '<tr><td style="width:100px">>Avance :  </td><td>' + frais.montant +' DH</td></tr>';
             if(frais.type_frais == 'Assurance')
-                content += '<p>Assurance :  ' + frais.montant +' DH</p>';
+                content += '<tr><td>Assurance :  </td><td>' + frais.montant +' DH</td></tr>';
             if(frais.type_frais == 'Frais de dossier')
-                content += '<p>Frais de dossier :  ' + frais.montant +' DH</p>';
+                content += '<tr><td>Frais de dossier :  </td><td>' + frais.montant +' DH</td></tr>';
             if(frais.type_frais == 'Caution')
-                content += '<p>Caution :  ' + frais.montant +' DH</p>';
+                content += '<tr><td>Caution :  </td><td>' + frais.montant +' DH</td></tr>';
         }
-        content += '<p>Mois payés : </p>';
-        content += '<table style="margin-left:50px; font-size:11px">';
+        content += '</table>';
+        var affichageEnteteMois = false;
         var total = 0;
+        // sort by order
+        listFrais.sort(function(a,b) {return (parseInt(a.list_order) > parseInt(b.list_order)) ? 1 : ((parseInt(b.list_order) > parseInt(a.list_order)) ? -1 : 0);} ); 
+
         for(var i = 0; i< listFrais.length; i++){
             var frais = listFrais[i];
             total += parseInt(frais.montant);
-            if(frais.type_frais == 'Caution' || frais.type_frais == 'Assurance' || frais.type_frais == 'Frais de dossier' )
+            if(frais.type_frais == 'Avance' || frais.type_frais == 'Caution' || frais.type_frais == 'Assurance' || frais.type_frais == 'Frais de dossier' )
                 continue;
+            if(!affichageEnteteMois){
+                content += '<p>Mois payés : </p>';
+                content += '<table style="margin-left:50px; font-size:11px">';
+                affichageEnteteMois = true;
+            }
             content += '<tr>';
-            content += '<td> - ' + frais.type_frais + '</td>';
+            content += '<td style="width:100px"> - ' + frais.type_frais + '</td>';
             content += '<td>' + frais.montant + ' DH </td>';
             content += '</tr>';
         }
-        content += '</table>';
-        content += '<p>Remise :  ' + reglement.remise_montant  + ' DH</p>';
+        if(affichageEnteteMois){
+            content += '</table>';
+        }
+        if(reglement.remise_montant > 0){
+            content += '<p>Remise :  ' + reglement.remise_montant  + ' DH</p>';
+        }
         content += '<p>Total :  ' + (total - reglement.remise_montant) +' DH </p>';
         content += '<p style="margin-left:250px;"><u>Signature</u></p><br><br>';
         // put border on the content

@@ -189,3 +189,21 @@
 .demo-protip strong {
   font-weight: 600;
 }
+
+.table-no-border{
+  border:0 !important;
+} 
+
+.table-no-border td{
+  border:0 !important;
+  text-align: left;
+} 
+
+.table-no-border th{
+  border:0 !important;
+  text-align: left;
+} 
+
+.table-no-border tr{
+  border:0 !important;
+}
